@@ -1,17 +1,18 @@
+import 'package:anylearn/controllers/auth_service.dart';
 import 'package:anylearn/models/pocket_client.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pocketbase/pocketbase.dart';
 import 'dart:developer' as developer;
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+class LoginPage extends StatefulWidget {
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginPageState extends State<LoginPage> {
   late final TextEditingController _emailController;
 
   late final TextEditingController _passwordController;
@@ -22,6 +23,8 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       final userData = await _client.users
           .authViaEmail(_emailController.text, _passwordController.text);
+
+      await AuthService.saveAuth(userData.token);
 
       _emailController.clear();
       _passwordController.clear();

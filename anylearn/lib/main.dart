@@ -1,8 +1,14 @@
+import 'package:anylearn/controllers/auth_service.dart';
+import 'package:anylearn/views/home.dart';
+import 'package:anylearn/views/login.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:anylearn/models/pocket_client.dart';
+import 'package:url_strategy/url_strategy.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await AuthService.refreshAuth();
   runApp(MyApp());
 }
 
@@ -10,14 +16,35 @@ class MyApp extends StatelessWidget {
   MyApp({super.key});
 
   final _router = GoRouter(
-    routes: [],
+    routes: [
+      GoRoute(
+        path: '/',
+        name: 'Home',
+        builder: (context, state) => const HomePage(),
+      ),
+      GoRoute(
+        path: '/login',
+        name: 'Login',
+        builder: (context, state) => const LoginPage(),
+      ),
+    ],
+    redirect: (context, state) async {
+      final bool isLoggingIn = state.subloc == state.namedLocation("Login");
+
+      if (await AuthService.checkAuth()) {
+        return null;
+      } else {
+        return isLoggingIn ? null : state.namedLocation('Login');
+      }
+    },
   );
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
+    return MaterialApp.router(
+      title: 'AnyLearn',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         // This is the theme of your application.
         //
@@ -30,6 +57,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
+      routerConfig: _router,
     );
   }
 }
