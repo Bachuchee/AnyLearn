@@ -3,6 +3,7 @@ import 'package:anylearn/Theme/colors.dart';
 import 'package:anylearn/controllers/auth_service.dart';
 import 'package:anylearn/models/pocket_client.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pocketbase/pocketbase.dart';
 
@@ -97,7 +98,7 @@ class _LoginSectionState extends State<LoginSection> {
               ),
             ),
           ),
-          const SizedBox(height: 40.0),
+          const SizedBox(height: 30.0),
           SizedBox(
             width: 309.0,
             child: TextField(

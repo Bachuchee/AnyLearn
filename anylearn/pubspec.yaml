@@ -41,6 +41,7 @@ dependencies:
   shared_preferences: ^2.0.15
   url_strategy: ^0.2.0
   animate_gradient: ^0.0.2
+  flutter_svg: ^1.1.6
 
 dev_dependencies:
   flutter_test:
@@ -58,6 +59,9 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
+
+  assets:
+    - assets/images/
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
