@@ -1,6 +1,7 @@
 import 'package:anylearn/controllers/auth_service.dart';
 import 'package:anylearn/views/home.dart';
 import 'package:anylearn/views/login/login.dart';
+import 'package:anylearn/views/signup/signup.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:anylearn/models/pocket_client.dart';
@@ -27,9 +28,15 @@ class MyApp extends StatelessWidget {
         name: 'Login',
         builder: (context, state) => const LoginPage(),
       ),
+      GoRoute(
+        path: '/signup',
+        name: 'Signup',
+        builder: (context, state) => const SignupPage(),
+      )
     ],
     redirect: (context, state) async {
-      final bool isLoggingIn = state.subloc == state.namedLocation("Login");
+      final bool isLoggingIn = state.subloc == state.namedLocation("Login") ||
+          state.subloc == state.namedLocation("Signup");
 
       if (await AuthService.checkAuth()) {
         return null;

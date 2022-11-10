@@ -145,7 +145,9 @@ class _LoginSectionState extends State<LoginSection> {
               ),
               const SizedBox(width: 4.0),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  context.go('/signup');
+                },
                 child: const Text(
                   "Sign up",
                   style: TextStyle(
