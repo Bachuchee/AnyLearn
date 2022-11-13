@@ -1,7 +1,4 @@
-import 'dart:html';
-
 import 'package:anylearn/models/pocket_client.dart';
-import 'package:pocketbase/pocketbase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
@@ -9,8 +6,6 @@ class AuthService {
 
   static Future<void> refreshAuth() async {
     final prefs = await SharedPreferences.getInstance();
-
-    final exists = prefs.containsKey("token");
 
     final authToken = prefs.getString("token") ?? "";
 
@@ -49,7 +44,6 @@ class AuthService {
 
       return true;
     } catch (e) {
-      print("error occured");
       return false;
     }
   }

@@ -4,8 +4,6 @@ import 'package:anylearn/views/login/login.dart';
 import 'package:anylearn/views/signup/signup.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:anylearn/models/pocket_client.dart';
-import 'package:url_strategy/url_strategy.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -1,9 +1,9 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:anylearn/Theme/colors.dart';
 import 'package:anylearn/controllers/auth_service.dart';
 import 'package:anylearn/models/pocket_client.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pocketbase/pocketbase.dart';
 import '../../models/topic.dart';
@@ -22,7 +22,7 @@ class _SignupPageState extends State<SignupPage> {
   late final TextEditingController _confrimController;
   late final TextEditingController _usernameController;
   List<Topic> _topicList = [];
-  List<String> _topics = [];
+  final List<String> _topics = [];
   final pocketClient = PocketClient.client;
 
   @override
@@ -52,7 +52,7 @@ class _SignupPageState extends State<SignupPage> {
 
   Future<void> createAccount() async {
     try {
-      final userData = await pocketClient.users.create(
+      await pocketClient.users.create(
         body: {
           'email': _emailController.text,
           'password': _passwordController.text,
@@ -83,7 +83,13 @@ class _SignupPageState extends State<SignupPage> {
       if (await AuthService.updateProfile(_usernameController.text, _topics)) {
         context.go("/");
       }
-    } catch (e) {}
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Couldn't sign up"),
+        ),
+      );
+    }
   }
 
   @override

@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pocketbase/pocketbase.dart';
-
-import '../models/pocket_client.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -11,8 +8,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final _pocketClient = PocketClient.client;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
