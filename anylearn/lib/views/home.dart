@@ -11,7 +11,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final _pocketClient = PocketClient.getClient();
+  final _pocketClient = PocketClient.client;
 
   @override
   Widget build(BuildContext context) {

@@ -1,4 +1,5 @@
 import 'package:anylearn/Theme/colors.dart';
+import 'package:anylearn/controllers/auth_service.dart';
 import 'package:anylearn/models/pocket_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -21,7 +22,8 @@ class _SignupPageState extends State<SignupPage> {
   late final TextEditingController _confrimController;
   late final TextEditingController _usernameController;
   List<Topic> _topicList = [];
-  final pocketClient = PocketClient.getClient();
+  List<String> _topics = [];
+  final pocketClient = PocketClient.client;
 
   @override
   void initState() {
@@ -72,6 +74,16 @@ class _SignupPageState extends State<SignupPage> {
         ),
       );
     }
+  }
+
+  Future<void> signup() async {
+    try {
+      await pocketClient.users
+          .authViaEmail(_emailController.text, _passwordController.text);
+      if (await AuthService.updateProfile(_usernameController.text, _topics)) {
+        context.go("/");
+      }
+    } catch (e) {}
   }
 
   @override
@@ -301,8 +313,8 @@ class _SignupPageState extends State<SignupPage> {
           const SizedBox(height: 30.0),
           Expanded(
             child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 50.0,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 8,
                 mainAxisSpacing: 1.0,
                 crossAxisSpacing: 1.0,
                 childAspectRatio: 1.0,
@@ -312,13 +324,32 @@ class _SignupPageState extends State<SignupPage> {
               scrollDirection: Axis.horizontal,
               itemCount: _topicList.length,
               itemBuilder: (context, index) => InputChip(
+                selected: _topics.contains(_topicList[index].id),
+                onPressed: (_topics.length < 3 ||
+                        _topics.contains(_topicList[index].id))
+                    ? () {
+                        if (_topics.contains(_topicList[index].id)) {
+                          setState(() {
+                            _topics.remove(_topicList[index].id);
+                          });
+                        } else {
+                          setState(() {
+                            _topics.add(_topicList[index].id);
+                          });
+                        }
+                      }
+                    : null,
                 label: Text(_topicList[index].name),
+                backgroundColor: primarySurface,
+                selectedColor: selectedColor,
               ),
             ),
           ),
           const SizedBox(height: 8.0),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: (_topics.isNotEmpty && _topics.length <= 3)
+                ? () => signup()
+                : null,
             style: ElevatedButton.styleFrom(
               backgroundColor: secondaryColor,
               shape: const RoundedRectangleBorder(

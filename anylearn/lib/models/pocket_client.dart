@@ -5,7 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class PocketClient {
   static final _client = PocketBase('http://127.0.0.1:8090');
 
-  static PocketBase getClient() {
+  static PocketBase get client {
     return _client;
   }
 
@@ -17,9 +17,19 @@ class PocketClient {
     );
     final List<Topic> topics = [];
     topicList.forEach((element) {
-      topics.add(Topic(element.data['name'], element.data['description']));
+      topics.add(
+        Topic(
+          element.data['name'],
+          element.data['description'],
+          element.id,
+        ),
+      );
     });
 
     return topics;
+  }
+
+  static UserModel get userModel {
+    return _client.authStore.model as UserModel;
   }
 }

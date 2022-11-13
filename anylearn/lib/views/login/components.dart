@@ -19,7 +19,7 @@ class _LoginSectionState extends State<LoginSection> {
 
   late final TextEditingController _passwordController;
 
-  final _client = PocketClient.getClient();
+  final _client = PocketClient.client;
 
   Future<void> _signIn() async {
     try {
