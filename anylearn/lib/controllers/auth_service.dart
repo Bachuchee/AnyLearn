@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:anylearn/models/pocket_client.dart';
+import 'package:http/http.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
@@ -20,7 +24,7 @@ class AuthService {
 
   static Future<bool> checkAuth() async {
     try {
-      await _client.users.refresh();
+      await _client.collection('users').authRefresh();
 
       return true;
     } catch (e) {
@@ -29,7 +33,7 @@ class AuthService {
   }
 
   static Future<bool> updateProfile(
-      String username, List<String> topics) async {
+      String username, String assetPath, List<String> topics) async {
     try {
       final body = {
         "username": username,
@@ -39,8 +43,9 @@ class AuthService {
         "is_banned": false,
       };
 
-      await _client.records
-          .update("profiles", PocketClient.userModel.profile!.id, body: body);
+      await _client
+          .collection('users')
+          .update(PocketClient.model.id, body: body);
 
       return true;
     } catch (e) {

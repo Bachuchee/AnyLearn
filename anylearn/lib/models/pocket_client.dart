@@ -9,11 +9,10 @@ class PocketClient {
   }
 
   static Future<List<Topic>> getTopics() async {
-    final topicList = await _client.records.getFullList(
-      'topics',
-      batch: 200,
-      filter: 'is_valid = True',
-    );
+    final topicList = await _client.collection('topics').getFullList(
+          batch: 200,
+          filter: 'is_valid = True',
+        );
     final List<Topic> topics = [];
     // ignore: avoid_function_literals_in_foreach_calls
     topicList.forEach((element) {
@@ -29,7 +28,7 @@ class PocketClient {
     return topics;
   }
 
-  static UserModel get userModel {
-    return _client.authStore.model as UserModel;
+  static RecordModel get model {
+    return _client.authStore.model as RecordModel;
   }
 }

@@ -24,8 +24,9 @@ class _LoginSectionState extends State<LoginSection> {
 
   Future<void> _signIn() async {
     try {
-      final userData = await _client.users
-          .authViaEmail(_emailController.text, _passwordController.text);
+      final userData = await _client
+          .collection('users')
+          .authWithPassword(_emailController.text, _passwordController.text);
 
       await AuthService.saveAuth(userData.token);
 

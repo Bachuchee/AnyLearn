@@ -1,5 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:io';
+
 import 'package:anylearn/Theme/colors.dart';
 import 'package:anylearn/controllers/auth_service.dart';
 import 'package:anylearn/models/pocket_client.dart';
@@ -24,6 +26,7 @@ class _SignupPageState extends State<SignupPage> {
   List<Topic> _topicList = [];
   final List<String> _topics = [];
   final pocketClient = PocketClient.client;
+  final String _assetPath = "assets/images/DefaultAvatar.jpg";
 
   @override
   void initState() {
@@ -52,7 +55,7 @@ class _SignupPageState extends State<SignupPage> {
 
   Future<void> createAccount() async {
     try {
-      await pocketClient.users.create(
+      await pocketClient.collection('users').create(
         body: {
           'email': _emailController.text,
           'password': _passwordController.text,
@@ -78,9 +81,11 @@ class _SignupPageState extends State<SignupPage> {
 
   Future<void> signup() async {
     try {
-      await pocketClient.users
-          .authViaEmail(_emailController.text, _passwordController.text);
-      if (await AuthService.updateProfile(_usernameController.text, _topics)) {
+      await pocketClient
+          .collection('users')
+          .authWithPassword(_emailController.text, _passwordController.text);
+      if (await AuthService.updateProfile(
+          _usernameController.text, _assetPath, _topics)) {
         context.go("/");
       }
     } catch (e) {
@@ -270,9 +275,9 @@ class _SignupPageState extends State<SignupPage> {
             CircleAvatar(
               radius: 100,
               child: Container(
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage('assets/images/DefaultAvatar.jpg'),
+                    image: AssetImage(_assetPath),
                   ),
                   shape: BoxShape.circle,
                 ),
