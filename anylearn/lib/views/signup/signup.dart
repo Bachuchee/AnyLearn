@@ -5,7 +5,9 @@ import 'dart:io';
 import 'package:anylearn/Theme/colors.dart';
 import 'package:anylearn/controllers/auth_service.dart';
 import 'package:anylearn/models/pocket_client.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pocketbase/pocketbase.dart';
 import '../../models/topic.dart';
@@ -26,7 +28,7 @@ class _SignupPageState extends State<SignupPage> {
   List<Topic> _topicList = [];
   final List<String> _topics = [];
   final pocketClient = PocketClient.client;
-  final String _assetPath = "assets/images/DefaultAvatar.jpg";
+  Uint8List _imageData = Uint8List(0);
 
   @override
   void initState() {
@@ -36,6 +38,12 @@ class _SignupPageState extends State<SignupPage> {
     _passwordController = TextEditingController();
     _confrimController = TextEditingController();
     _usernameController = TextEditingController();
+    rootBundle.load('assets/images/DefaultAvatar.jpg').then(
+          (value) => _imageData = value.buffer.asUint8List(
+            value.offsetInBytes,
+            value.lengthInBytes,
+          ),
+        );
     PocketClient.getTopics().then((value) {
       setState(() {
         _topicList = value;
@@ -85,7 +93,7 @@ class _SignupPageState extends State<SignupPage> {
           .collection('users')
           .authWithPassword(_emailController.text, _passwordController.text);
       if (await AuthService.updateProfile(
-          _usernameController.text, _assetPath, _topics)) {
+          _usernameController.text, _imageData, _topics)) {
         context.go("/");
       }
     } catch (e) {
@@ -277,7 +285,7 @@ class _SignupPageState extends State<SignupPage> {
               child: Container(
                 decoration: BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage(_assetPath),
+                    image: MemoryImage(_imageData),
                   ),
                   shape: BoxShape.circle,
                 ),

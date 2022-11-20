@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:anylearn/models/pocket_client.dart';
 import 'package:http/http.dart';
@@ -33,8 +34,17 @@ class AuthService {
   }
 
   static Future<bool> updateProfile(
-      String username, String assetPath, List<String> topics) async {
+    String username,
+    Uint8List imageData,
+    List<String> topics,
+  ) async {
     try {
+      final imageFile = MultipartFile.fromBytes(
+        'avatar',
+        imageData,
+        filename: 'avatar.png',
+      );
+
       final body = {
         "username": username,
         "about": " ",
@@ -45,7 +55,7 @@ class AuthService {
 
       await _client
           .collection('users')
-          .update(PocketClient.model.id, body: body);
+          .update(PocketClient.model.id, body: body, files: [imageFile]);
 
       return true;
     } catch (e) {
