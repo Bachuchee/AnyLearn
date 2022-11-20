@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:anylearn/Theme/colors.dart';
 import 'package:anylearn/controllers/auth_service.dart';
+import 'package:anylearn/controllers/file_service.dart';
 import 'package:anylearn/models/pocket_client.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -102,6 +103,15 @@ class _SignupPageState extends State<SignupPage> {
           content: Text("Couldn't sign up"),
         ),
       );
+    }
+  }
+
+  Future<void> setAvatar() async {
+    final imageData = await FileService.getImage();
+    if (imageData.isNotEmpty) {
+      setState(() {
+        _imageData = imageData;
+      });
     }
   }
 
@@ -280,14 +290,22 @@ class _SignupPageState extends State<SignupPage> {
               ),
             ),
             const SizedBox(height: 20.0),
-            CircleAvatar(
-              radius: 100,
-              child: Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: MemoryImage(_imageData),
+            Material(
+              type: MaterialType.circle,
+              color: primarySurface,
+              child: InkWell(
+                onTap: () => setAvatar(),
+                child: CircleAvatar(
+                  radius: 100,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: MemoryImage(_imageData),
+                        fit: BoxFit.cover,
+                      ),
+                      shape: BoxShape.circle,
+                    ),
                   ),
-                  shape: BoxShape.circle,
                 ),
               ),
             ),
