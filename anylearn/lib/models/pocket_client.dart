@@ -1,4 +1,5 @@
 import 'package:anylearn/models/topic.dart';
+import 'package:anylearn/models/user.dart';
 import 'package:pocketbase/pocketbase.dart';
 
 class PocketClient {
@@ -26,6 +27,11 @@ class PocketClient {
     });
 
     return topics;
+  }
+
+  static Future<User> getUser(String id) async {
+    final userRecord = await _client.collection('users').getOne(id);
+    return User.fromJson(userRecord.data);
   }
 
   static RecordModel get model {

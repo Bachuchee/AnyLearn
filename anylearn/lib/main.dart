@@ -1,5 +1,5 @@
 import 'package:anylearn/controllers/auth_service.dart';
-import 'package:anylearn/views/home.dart';
+import 'package:anylearn/views/home/home.dart';
 import 'package:anylearn/views/login/login.dart';
 import 'package:anylearn/views/signup/signup.dart';
 import 'package:flutter/material.dart';
@@ -33,13 +33,13 @@ class MyApp extends StatelessWidget {
       )
     ],
     redirect: (context, state) async {
-      final bool isLoggingIn = state.subloc == state.namedLocation("Login") ||
-          state.subloc == state.namedLocation("Signup");
+      final bool isLoggingIn =
+          state.subloc == "/login" || state.subloc == '/signup';
 
       if (await AuthService.checkAuth()) {
         return null;
       } else {
-        return isLoggingIn ? null : state.namedLocation('Login');
+        return isLoggingIn ? null : '/login';
       }
     },
   );
