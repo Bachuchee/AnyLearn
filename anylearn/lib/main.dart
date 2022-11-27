@@ -1,4 +1,5 @@
 import 'package:anylearn/controllers/auth_service.dart';
+import 'package:anylearn/views/home/components/specialscroll.dart';
 import 'package:anylearn/views/home/home.dart';
 import 'package:anylearn/views/login/login.dart';
 import 'package:anylearn/views/signup/signup.dart';
@@ -50,6 +51,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       title: 'AnyLearn',
       debugShowCheckedModeBanner: false,
+      scrollBehavior: ChipListScroll(),
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'components/CourseCard.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -15,7 +17,13 @@ class _HomePageState extends State<HomePage> {
         title: const Text("Home"),
       ),
       body: const Center(
-        child: SelectableText("Hello :)"),
+        child: CourseCard(
+          username: "Bachuchee",
+          courseImage: AssetImage('assets/images/login_splash.jpg'),
+          userImage: AssetImage('assets/images/DefaultAvatar.jpg'),
+          courseTitle: "The best introduction to programming",
+          courseChips: ["Science", "Programming", "Python"],
+        ),
       ),
     );
   }
