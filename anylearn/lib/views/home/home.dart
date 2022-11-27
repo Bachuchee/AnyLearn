@@ -1,5 +1,8 @@
+import 'package:anylearn/models/pocket_client.dart';
 import 'package:flutter/material.dart';
 
+import '../../models/course.dart';
+import '../../models/topic.dart';
 import 'components/CourseCard.dart';
 
 class HomePage extends StatefulWidget {
@@ -10,19 +13,53 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final _client = PocketClient.client;
+  List<Course> _courses = [];
+
+  @override
+  void initState() {
+    super.initState();
+    PocketClient.getCourses().then(
+      (value) => setState(() => _courses = value),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Home"),
       ),
-      body: const Center(
-        child: CourseCard(
-          username: "Bachuchee",
-          courseImage: AssetImage('assets/images/login_splash.jpg'),
-          userImage: AssetImage('assets/images/DefaultAvatar.jpg'),
-          courseTitle: "The best introduction to programming",
-          courseChips: ["Science", "Programming", "Python"],
+      body: Container(
+        padding: const EdgeInsets.all(8.0),
+        child: GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 4,
+            mainAxisSpacing: 24.0,
+            crossAxisSpacing: 30.0,
+            childAspectRatio: 1.4,
+          ),
+          itemCount: _courses.length,
+          shrinkWrap: true,
+          itemBuilder: (context, index) => CourseCard(
+            username: _courses[index].user!.username,
+            courseTitle: _courses[index].title,
+            courseImage: NetworkImage(
+              _client
+                  .getFileUrl(
+                      _courses[index].model!, _courses[index].imageName!)
+                  .toString(),
+            ),
+            userImage: NetworkImage(
+              _client
+                  .getFileUrl(
+                    _courses[index].user!.model!,
+                    _courses[index].user!.avatarName,
+                  )
+                  .toString(),
+            ),
+            courseChips: _courses[index].topics,
+          ),
         ),
       ),
     );

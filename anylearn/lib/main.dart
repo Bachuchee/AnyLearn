@@ -1,5 +1,5 @@
 import 'package:anylearn/controllers/auth_service.dart';
-import 'package:anylearn/views/home/components/specialscroll.dart';
+import 'package:anylearn/utils/specialscroll.dart';
 import 'package:anylearn/views/home/home.dart';
 import 'package:anylearn/views/login/login.dart';
 import 'package:anylearn/views/signup/signup.dart';
