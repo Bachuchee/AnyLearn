@@ -47,6 +47,7 @@ class PocketClient {
       for (var course in courseList) {
         final userModel =
             await _client.collection('users').getOne(course.data['user_id']);
+        print("log: ${userModel.data.toString()}");
         final curCourse = Course.fromJson(course.data, course, userModel);
 
         for (var topic in course.data['course_topics']) {
@@ -54,6 +55,8 @@ class PocketClient {
               topicList.firstWhere((element) => element.id == topic);
           curCourse.addTopic(curTopic);
         }
+
+        print("log: got here");
 
         courses.add(curCourse);
       }

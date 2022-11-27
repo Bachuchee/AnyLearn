@@ -51,6 +51,8 @@ class AuthService {
         "is_banned": false,
       };
 
+      print(body.toString());
+
       await _client
           .collection('users')
           .update(PocketClient.model.id, body: body, files: [imageFile]);
