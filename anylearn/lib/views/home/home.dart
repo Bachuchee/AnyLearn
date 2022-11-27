@@ -1,4 +1,5 @@
 import 'package:anylearn/models/pocket_client.dart';
+import 'package:anylearn/views/shared/main-app-bar.dart';
 import 'package:flutter/material.dart';
 
 import '../../models/course.dart';
@@ -27,8 +28,12 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Home"),
+      appBar: MainAppBar(
+        userImage: NetworkImage(
+          _client
+              .getFileUrl(PocketClient.model, PocketClient.model.data['avatar'])
+              .toString(),
+        ),
       ),
       body: Container(
         padding: const EdgeInsets.all(8.0),
