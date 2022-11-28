@@ -1,3 +1,4 @@
+import 'package:anylearn/views/shared/profile-avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -47,20 +48,7 @@ class _MainAppBarState extends State<MainAppBar> {
             ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-            height: 40.0,
-            width: 40.0,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.grey,
-              image: widget.userImage != null
-                  ? DecorationImage(image: widget.userImage!, fit: BoxFit.cover)
-                  : null,
-            ),
-          ),
-        ),
+        ProfileAvatar(userImage: widget.userImage),
       ],
     );
   }
