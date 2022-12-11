@@ -27,44 +27,34 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: MainAppBar(
-        userImage: NetworkImage(
-          _client
-              .getFileUrl(PocketClient.model, PocketClient.model.data['avatar'])
-              .toString(),
+    return Container(
+      padding: const EdgeInsets.all(8.0),
+      child: GridView.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 4,
+          mainAxisSpacing: 24.0,
+          crossAxisSpacing: 30.0,
+          childAspectRatio: 1.4,
         ),
-      ),
-      body: Container(
-        padding: const EdgeInsets.all(8.0),
-        child: GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 4,
-            mainAxisSpacing: 24.0,
-            crossAxisSpacing: 30.0,
-            childAspectRatio: 1.4,
+        itemCount: _courses.length,
+        shrinkWrap: true,
+        itemBuilder: (context, index) => CourseCard(
+          username: _courses[index].user!.username,
+          courseTitle: _courses[index].title,
+          courseImage: NetworkImage(
+            _client
+                .getFileUrl(_courses[index].model!, _courses[index].imageName!)
+                .toString(),
           ),
-          itemCount: _courses.length,
-          shrinkWrap: true,
-          itemBuilder: (context, index) => CourseCard(
-            username: _courses[index].user!.username,
-            courseTitle: _courses[index].title,
-            courseImage: NetworkImage(
-              _client
-                  .getFileUrl(
-                      _courses[index].model!, _courses[index].imageName!)
-                  .toString(),
-            ),
-            userImage: NetworkImage(
-              _client
-                  .getFileUrl(
-                    _courses[index].user!.model!,
-                    _courses[index].user!.avatarName,
-                  )
-                  .toString(),
-            ),
-            courseChips: _courses[index].topics,
+          userImage: NetworkImage(
+            _client
+                .getFileUrl(
+                  _courses[index].user!.model!,
+                  _courses[index].user!.avatarName,
+                )
+                .toString(),
           ),
+          courseChips: _courses[index].topics,
         ),
       ),
     );
