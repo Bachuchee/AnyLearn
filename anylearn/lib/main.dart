@@ -2,6 +2,7 @@ import 'package:anylearn/controllers/auth_service.dart';
 import 'package:anylearn/utils/specialscroll.dart';
 import 'package:anylearn/views/home/home.dart';
 import 'package:anylearn/views/login/login.dart';
+import 'package:anylearn/views/shared/PageScaffold/page_scaffold.dart';
 import 'package:anylearn/views/signup/signup.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
       GoRoute(
         path: '/',
         name: 'Home',
-        builder: (context, state) => const HomePage(),
+        builder: (context, state) => const PageScaffold(content: HomePage()),
       ),
       GoRoute(
         path: '/login',
