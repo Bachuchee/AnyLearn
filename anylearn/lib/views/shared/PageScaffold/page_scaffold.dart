@@ -1,17 +1,15 @@
 import 'package:anylearn/views/menu/menu.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../models/pocket_client.dart';
 import '../main-app-bar.dart';
 
 class PageScaffold extends StatefulWidget {
-  const PageScaffold({super.key, required this.content});
+  const PageScaffold({super.key, required this.content, this.appbarExtension});
 
   final Widget content;
+  final Widget? appbarExtension;
 
   @override
   State<PageScaffold> createState() => _PageScaffoldState();

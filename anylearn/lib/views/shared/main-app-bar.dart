@@ -1,7 +1,5 @@
 import 'package:anylearn/views/shared/profile-avatar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 
 import '../../Theme/colors.dart';
 
@@ -11,11 +9,13 @@ class MainAppBar extends StatefulWidget implements PreferredSizeWidget {
     this.userImage,
     required this.onClickMenu,
     required this.menuOpened,
+    this.appbarExtension,
   }) : preferredSize = const Size.fromHeight(kToolbarHeight);
 
   final ImageProvider? userImage;
   final void Function() onClickMenu;
   final bool Function() menuOpened;
+  final Widget? appbarExtension;
 
   @override
   final Size preferredSize;

@@ -1,8 +1,6 @@
 import 'package:anylearn/Theme/colors.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key, required this.actionList});
@@ -44,6 +42,27 @@ class _MenuPageState extends State<MenuPage>
   }
 
   @override
+  void didChangeDependencies() {
+    precacheImage(
+      _assets[0],
+      context,
+    );
+    precacheImage(
+      _assets[1],
+      context,
+    );
+    precacheImage(
+      _assets[2],
+      context,
+    );
+    precacheImage(
+      _assets[3],
+      context,
+    );
+    super.didChangeDependencies();
+  }
+
+  @override
   void dispose() {
     super.dispose();
     _controller.dispose();
@@ -67,10 +86,10 @@ class _MenuPageState extends State<MenuPage>
 
   @override
   Widget build(BuildContext context) {
-    final _widgetList = <Widget>[];
+    final widgetList = <Widget>[];
 
     for (int i = 0; i < _imageShowing.length; i++) {
-      _widgetList.add(
+      widgetList.add(
         Positioned(
           top: _imageY! - 500.0,
           left: _imageX! - 300.0,
@@ -93,7 +112,7 @@ class _MenuPageState extends State<MenuPage>
       );
     }
 
-    _widgetList.add(
+    widgetList.add(
       ListView.builder(
         controller: _controller,
         physics: const NeverScrollableScrollPhysics(),
@@ -120,7 +139,7 @@ class _MenuPageState extends State<MenuPage>
         child: MouseRegion(
           onHover: scrollSetter,
           child: Stack(
-            children: _widgetList,
+            children: widgetList,
           ),
         ),
       ),
@@ -129,7 +148,13 @@ class _MenuPageState extends State<MenuPage>
 }
 
 class OffMenuItem extends StatefulWidget {
-  const OffMenuItem(this.text, this.onEnter, this.onExit, {this.action});
+  const OffMenuItem(
+    this.text,
+    this.onEnter,
+    this.onExit, {
+    super.key,
+    this.action,
+  });
 
   final String text;
   final void Function()? action;

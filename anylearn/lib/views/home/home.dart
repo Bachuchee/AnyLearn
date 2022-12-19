@@ -1,9 +1,6 @@
 import 'package:anylearn/models/pocket_client.dart';
-import 'package:anylearn/views/shared/main-app-bar.dart';
 import 'package:flutter/material.dart';
-
 import '../../models/course.dart';
-import '../../models/topic.dart';
 import 'components/CourseCard.dart';
 
 class HomePage extends StatefulWidget {
