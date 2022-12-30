@@ -4,18 +4,20 @@ import 'package:flutter/material.dart';
 import '../../Theme/colors.dart';
 
 class MainAppBar extends StatefulWidget implements PreferredSizeWidget {
-  const MainAppBar({
+  MainAppBar({
     super.key,
     this.userImage,
     required this.onClickMenu,
     required this.menuOpened,
     this.appbarExtension,
-  }) : preferredSize = const Size.fromHeight(kToolbarHeight);
+  }) : preferredSize = Size.fromHeight(
+          (appbarExtension == null ? kToolbarHeight : kToolbarHeight + 50.0),
+        );
 
   final ImageProvider? userImage;
   final void Function() onClickMenu;
   final bool Function() menuOpened;
-  final Widget? appbarExtension;
+  final PreferredSizeWidget? appbarExtension;
 
   @override
   final Size preferredSize;
@@ -80,6 +82,7 @@ class _MainAppBarState extends State<MainAppBar>
         ),
         ProfileAvatar(userImage: widget.userImage),
       ],
+      bottom: widget.appbarExtension,
     );
   }
 }

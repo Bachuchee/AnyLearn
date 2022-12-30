@@ -1,16 +1,22 @@
 import 'package:anylearn/controllers/auth_service.dart';
 import 'package:anylearn/utils/specialscroll.dart';
+import 'package:anylearn/views/home/components/home_filter.dart';
 import 'package:anylearn/views/home/home.dart';
 import 'package:anylearn/views/login/login.dart';
 import 'package:anylearn/views/shared/PageScaffold/page_scaffold.dart';
 import 'package:anylearn/views/signup/signup.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AuthService.refreshAuth();
-  runApp(MyApp());
+  runApp(
+    ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -21,7 +27,10 @@ class MyApp extends StatelessWidget {
       GoRoute(
         path: '/',
         name: 'Home',
-        builder: (context, state) => const PageScaffold(content: HomePage()),
+        builder: (context, state) => const PageScaffold(
+          content: HomePage(),
+          appbarExtension: HomeFilters(),
+        ),
       ),
       GoRoute(
         path: '/login',

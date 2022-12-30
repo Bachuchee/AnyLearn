@@ -1,29 +1,34 @@
 import 'package:anylearn/models/pocket_client.dart';
+import 'package:anylearn/views/home/components/home_filter.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/course.dart';
 import 'components/CourseCard.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  ConsumerState<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends ConsumerState<HomePage> {
   final _client = PocketClient.client;
   List<Course> _courses = [];
 
   @override
   void initState() {
     super.initState();
-    PocketClient.getCourses().then(
-      (value) => setState(() => _courses = value),
-    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final topicFilter = ref.watch(filterProvider);
+
+    PocketClient.getCourses(topicFilter).then(
+      (value) => setState(() => _courses = value),
+    );
+
     return Container(
       padding: const EdgeInsets.all(8.0),
       child: GridView.builder(

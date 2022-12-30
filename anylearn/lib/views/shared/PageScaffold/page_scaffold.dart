@@ -9,7 +9,7 @@ class PageScaffold extends StatefulWidget {
   const PageScaffold({super.key, required this.content, this.appbarExtension});
 
   final Widget content;
-  final Widget? appbarExtension;
+  final PreferredSizeWidget? appbarExtension;
 
   @override
   State<PageScaffold> createState() => _PageScaffoldState();
@@ -68,7 +68,9 @@ class _PageScaffoldState extends State<PageScaffold>
         menuOpened: () {
           return _isDrawerOpen() || _isDrawerOpening();
         },
+        appbarExtension: widget.appbarExtension,
       ),
+      resizeToAvoidBottomInset: false,
       body: Stack(
         children: [
           widget.content,
