@@ -1,21 +1,23 @@
 import 'package:anylearn/views/shared/profile-avatar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 
 import '../../Theme/colors.dart';
 
 class MainAppBar extends StatefulWidget implements PreferredSizeWidget {
-  const MainAppBar({
+  MainAppBar({
     super.key,
     this.userImage,
     required this.onClickMenu,
     required this.menuOpened,
-  }) : preferredSize = const Size.fromHeight(kToolbarHeight);
+    this.appbarExtension,
+  }) : preferredSize = Size.fromHeight(
+          (appbarExtension == null ? kToolbarHeight : kToolbarHeight + 50.0),
+        );
 
   final ImageProvider? userImage;
   final void Function() onClickMenu;
   final bool Function() menuOpened;
+  final PreferredSizeWidget? appbarExtension;
 
   @override
   final Size preferredSize;
@@ -80,6 +82,7 @@ class _MainAppBarState extends State<MainAppBar>
         ),
         ProfileAvatar(userImage: widget.userImage),
       ],
+      bottom: widget.appbarExtension,
     );
   }
 }

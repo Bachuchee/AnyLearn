@@ -36,34 +36,50 @@ class PocketClient {
     return User.fromJson(userRecord.data, userRecord);
   }
 
-  static Future<List<Course>> getCourses() async {
+  static Future<List<Course>> getCourses(Topic? topicFilter) async {
     try {
-      final courseList =
-          await _client.collection('courses').getFullList(batch: 200);
-
       final List<Course> courses = [];
+      final List<String> existingCourses = [];
       final topicList = await getTopics();
 
-      for (var course in courseList) {
-        final userModel =
-            await _client.collection('users').getOne(course.data['user_id']);
-        print("log: ${userModel.data.toString()}");
-        final curCourse = Course.fromJson(course.data, course, userModel);
+      String? filter =
+          topicFilter == null ? null : 'topic = "${topicFilter.id}"';
 
-        for (var topic in course.data['course_topics']) {
-          final curTopic =
-              topicList.firstWhere((element) => element.id == topic);
+      final courseList = await _client
+          .collection('course_topics')
+          .getList(filter: filter, sort: "-course");
+
+      for (var courseId in courseList.items) {
+        if (existingCourses.contains(courseId.data['course'])) {
+          continue;
+        }
+
+        var courseRecord =
+            await _client.collection('courses').getOne(courseId.data["course"]);
+
+        final userModel = await _client
+            .collection('users')
+            .getOne(courseRecord.data['user_id']);
+
+        final curCourse =
+            Course.fromJson(courseRecord.data, courseRecord, userModel);
+
+        final curTopics = await _client
+            .collection('course_topics')
+            .getList(filter: 'course = "${courseRecord.id}"');
+
+        for (var topic in curTopics.items) {
+          final curTopic = topicList
+              .firstWhere((element) => element.id == topic.data['topic']);
           curCourse.addTopic(curTopic);
         }
 
-        print("log: got here");
-
+        existingCourses.add(curCourse.id!);
         courses.add(curCourse);
       }
 
       return courses;
     } catch (e) {
-      print("failed");
       return [];
     }
   }
