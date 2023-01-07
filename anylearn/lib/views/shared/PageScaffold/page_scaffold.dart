@@ -18,42 +18,6 @@ class PageScaffold extends StatefulWidget {
 class _PageScaffoldState extends State<PageScaffold>
     with SingleTickerProviderStateMixin {
   final _client = PocketClient.client;
-  late AnimationController _contoller;
-
-  @override
-  void initState() {
-    super.initState();
-    _contoller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 100),
-    );
-  }
-
-  @override
-  void dispose() {
-    _contoller.dispose();
-    super.dispose();
-  }
-
-  bool _isDrawerOpen() {
-    return _contoller.value == 1.0;
-  }
-
-  bool _isDrawerOpening() {
-    return _contoller.status == AnimationStatus.forward;
-  }
-
-  bool _isDrawerClosed() {
-    return _contoller.value == 0.0;
-  }
-
-  void _toggleDrawer() {
-    if (_isDrawerOpen() || _isDrawerOpening()) {
-      _contoller.reverse();
-    } else {
-      _contoller.forward();
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,39 +28,19 @@ class _PageScaffoldState extends State<PageScaffold>
               .getFileUrl(PocketClient.model, PocketClient.model.data['avatar'])
               .toString(),
         ),
-        onClickMenu: _toggleDrawer,
-        menuOpened: () {
-          return _isDrawerOpen() || _isDrawerOpening();
-        },
         appbarExtension: widget.appbarExtension,
       ),
       resizeToAvoidBottomInset: false,
-      body: Stack(
+      body: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          widget.content,
-          _buildMenuDrawer(context),
+          const MenuPage(actionList: []),
+          const VerticalDivider(
+            width: 1.0,
+            thickness: 1.0,
+          ),
+          Expanded(child: widget.content),
         ],
-      ),
-    );
-  }
-
-  Widget _buildMenuDrawer(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _contoller,
-      builder: (context, child) => FractionalTranslation(
-        translation: Offset(1.0 - _contoller.value, 0.0),
-        child: _isDrawerClosed()
-            ? const SizedBox()
-            : MenuPage(
-                actionList: [
-                  () {
-                    context.go('/');
-                  },
-                  () {},
-                  () {},
-                  () {},
-                ],
-              ),
       ),
     );
   }
