@@ -46,6 +46,13 @@ class _CreateCourseState extends ConsumerState<CreateCourse> {
         },
       ),
     );
+    resetProvider();
+  }
+
+  void resetProvider() async {
+    ref.read(newCourseProvider.notifier).state = Course(
+      user: User.fromJson(PocketClient.model.data, PocketClient.model),
+    );
   }
 
   Future<void> setCourseImage() async {
