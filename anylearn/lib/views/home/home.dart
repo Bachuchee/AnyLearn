@@ -45,7 +45,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           courseTitle: _courses[index].title,
           courseImage: NetworkImage(
             _client
-                .getFileUrl(_courses[index].model!, _courses[index].imageName!)
+                .getFileUrl(_courses[index].model!, _courses[index].imageName)
                 .toString(),
           ),
           userImage: NetworkImage(

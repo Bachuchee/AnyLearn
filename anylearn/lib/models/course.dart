@@ -4,17 +4,17 @@ import 'package:pocketbase/pocketbase.dart';
 
 class Course {
   Course(
-      {this.id,
-      this.title,
-      this.description,
+      {this.id = '',
+      this.title = '',
+      this.description = '',
       this.user,
-      this.imageName,
+      this.imageName = '',
       this.model});
 
-  final String? id;
-  final String? title;
-  final String? description;
-  final String? imageName;
+  final String id;
+  String title;
+  String description;
+  String imageName;
   final User? user;
   final RecordModel? model;
   final List<Topic> topics = [];
@@ -30,11 +30,13 @@ class Course {
     topics.add(topic);
   }
 
+  void removeTopic(Topic topic) {
+    topics.remove(topic);
+  }
+
   Map<String, dynamic> toJson() => {
-        'id': id,
         'title': title,
         'description': description,
-        'imageName': imageName,
-        'user': user!.toJson()
+        'user_id': user!.id,
       };
 }

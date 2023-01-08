@@ -1,5 +1,7 @@
 import 'package:anylearn/models/topic.dart';
 import 'package:anylearn/models/user.dart';
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart';
 import 'package:pocketbase/pocketbase.dart';
 
 import 'course.dart';
@@ -74,13 +76,82 @@ class PocketClient {
           curCourse.addTopic(curTopic);
         }
 
-        existingCourses.add(curCourse.id!);
+        existingCourses.add(curCourse.id);
         courses.add(curCourse);
       }
 
       return courses;
     } catch (e) {
       return [];
+    }
+  }
+
+  static Future<List<Course>> getUserCourses(String userId) async {
+    try {
+      final List<Course> courses = [];
+      final List<String> existingCourses = [];
+      final topicList = await getTopics();
+
+      String filter = 'user_id = "$userId"';
+
+      final courseList =
+          await _client.collection('courses').getList(filter: filter);
+
+      for (var courseRecord in courseList.items) {
+        final userModel = await _client
+            .collection('users')
+            .getOne(courseRecord.data['user_id']);
+
+        final curCourse =
+            Course.fromJson(courseRecord.data, courseRecord, userModel);
+
+        final curTopics = await _client
+            .collection('course_topics')
+            .getList(filter: 'course = "${courseRecord.id}"');
+
+        for (var topic in curTopics.items) {
+          final curTopic = topicList
+              .firstWhere((element) => element.id == topic.data['topic']);
+          curCourse.addTopic(curTopic);
+        }
+
+        existingCourses.add(curCourse.id);
+        courses.add(curCourse);
+      }
+
+      return courses;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  static Future<bool> createCourse(
+    Course newCourse,
+    Uint8List courseImage,
+  ) async {
+    final courseData = newCourse.toJson();
+
+    final image = MultipartFile.fromBytes(
+      'image',
+      courseImage,
+      filename: 'courseImage.png',
+    );
+
+    try {
+      final courseRecord = await _client.collection('courses').create(
+        body: courseData,
+        files: [image],
+      );
+
+      for (final topic in newCourse.topics) {
+        final body = {'course': courseRecord.id, 'topic': topic.id};
+
+        await _client.collection('course_topics').create(body: body);
+      }
+
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 

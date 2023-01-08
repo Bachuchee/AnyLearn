@@ -1,10 +1,12 @@
 import 'package:anylearn/controllers/auth_service.dart';
 import 'package:anylearn/utils/specialscroll.dart';
+import 'package:anylearn/views/create_course/create_course.dart';
 import 'package:anylearn/views/home/components/home_filter.dart';
 import 'package:anylearn/views/home/home.dart';
 import 'package:anylearn/views/login/login.dart';
 import 'package:anylearn/views/shared/PageScaffold/page_scaffold.dart';
 import 'package:anylearn/views/signup/signup.dart';
+import 'package:anylearn/views/user_courses/user_courses.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -31,6 +33,18 @@ class MyApp extends StatelessWidget {
           content: HomePage(),
           appbarExtension: HomeFilters(),
         ),
+      ),
+      GoRoute(
+        path: '/user-courses',
+        name: 'UserCourses',
+        builder: (context, state) => const PageScaffold(
+          content: UserCourses(),
+        ),
+      ),
+      GoRoute(
+        path: '/new-course',
+        name: 'NewCourse',
+        builder: (context, state) => const CreateCourse(),
       ),
       GoRoute(
         path: '/login',
