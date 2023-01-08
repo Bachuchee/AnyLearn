@@ -116,8 +116,17 @@ class _CreateCourseState extends ConsumerState<CreateCourse> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text(
+                "Create a new Course:",
+                style: TextStyle(
+                  color: secondaryColor,
+                  fontSize: 40.0,
+                ),
+              ),
+            ),
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Column(
@@ -193,8 +202,8 @@ class _CreateCourseState extends ConsumerState<CreateCourse> {
                   ],
                 ),
                 SizedBox(
-                  width: 300.0,
-                  height: 300.0,
+                  width: 260.0,
+                  height: 260.0,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.grey,
