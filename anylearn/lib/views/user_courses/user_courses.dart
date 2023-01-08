@@ -4,11 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:go_router/go_router.dart';
 import '../../models/course.dart';
 import '../home/components/CourseCard.dart';
-
-final userCourseProvider = StateProvider<List<Course>>((ref) => []);
 
 class UserCourses extends ConsumerStatefulWidget {
   const UserCourses({super.key});
@@ -20,24 +18,31 @@ class UserCourses extends ConsumerStatefulWidget {
 class _UserCoursesState extends ConsumerState<UserCourses> {
   final _client = PocketClient.client;
 
+  List<Course> _userCourses = [];
+
   @override
   void initState() {
     super.initState();
-    PocketClient.getUserCourses(PocketClient.model.id)
-        .then((value) => ref.read(userCourseProvider.notifier).state = value);
+    PocketClient.getUserCourses(PocketClient.model.id).then(
+      (value) => setState(
+        () {
+          _userCourses = value;
+        },
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final courseList = ref.watch(userCourseProvider);
-
     return Column(
       children: [
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.grey),
-            onPressed: () {},
+            onPressed: () {
+              context.go('/new-course');
+            },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: const [
@@ -56,26 +61,26 @@ class _UserCoursesState extends ConsumerState<UserCourses> {
               crossAxisSpacing: 30.0,
               childAspectRatio: 1.4,
             ),
-            itemCount: courseList.length,
+            itemCount: _userCourses.length,
             shrinkWrap: true,
             itemBuilder: (context, index) => CourseCard(
-              username: courseList[index].user!.username,
-              courseTitle: courseList[index].title,
+              username: _userCourses[index].user!.username,
+              courseTitle: _userCourses[index].title,
               courseImage: NetworkImage(
                 _client
-                    .getFileUrl(
-                        courseList[index].model!, courseList[index].imageName!)
+                    .getFileUrl(_userCourses[index].model!,
+                        _userCourses[index].imageName)
                     .toString(),
               ),
               userImage: NetworkImage(
                 _client
                     .getFileUrl(
-                      courseList[index].user!.model!,
-                      courseList[index].user!.avatarName,
+                      _userCourses[index].user!.model!,
+                      _userCourses[index].user!.avatarName,
                     )
                     .toString(),
               ),
-              courseChips: courseList[index].topics,
+              courseChips: _userCourses[index].topics,
             ),
           ),
         ),
