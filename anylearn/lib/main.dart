@@ -5,6 +5,7 @@ import 'package:anylearn/views/home/home.dart';
 import 'package:anylearn/views/login/login.dart';
 import 'package:anylearn/views/shared/PageScaffold/page_scaffold.dart';
 import 'package:anylearn/views/signup/signup.dart';
+import 'package:anylearn/views/user_courses/user_courses.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -30,6 +31,13 @@ class MyApp extends StatelessWidget {
         builder: (context, state) => const PageScaffold(
           content: HomePage(),
           appbarExtension: HomeFilters(),
+        ),
+      ),
+      GoRoute(
+        path: '/user-courses',
+        name: 'UserCourses',
+        builder: (context, state) => const PageScaffold(
+          content: UserCourses(),
         ),
       ),
       GoRoute(

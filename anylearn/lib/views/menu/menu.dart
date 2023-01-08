@@ -1,29 +1,42 @@
 import 'package:anylearn/Theme/colors.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
-class MenuPage extends StatefulWidget {
-  const MenuPage({super.key, required this.actionList});
+final indexProvider = StateProvider<int>((ref) => 0);
 
-  final List<void Function()> actionList;
+class MenuPage extends ConsumerStatefulWidget {
+  const MenuPage({super.key});
 
   @override
-  State<MenuPage> createState() => _MenuPageState();
+  ConsumerState<MenuPage> createState() => _MenuPageState();
 }
 
-class _MenuPageState extends State<MenuPage>
+class _MenuPageState extends ConsumerState<MenuPage>
     with SingleTickerProviderStateMixin {
-  final items = [
+  final _items = [
     'Home',
     'My Courses',
     'Ongoing Courses',
     'Following',
   ];
 
-  int _index = 0;
+  final _actionList = [
+    (BuildContext context) {
+      context.go('/');
+    },
+    (BuildContext context) {
+      context.go('/user-courses');
+    },
+    (BuildContext context) {},
+    (BuildContext context) {},
+  ];
 
   @override
   Widget build(BuildContext context) {
+    int index = ref.watch(indexProvider);
+
     return NavigationRail(
       labelType: NavigationRailLabelType.all,
       useIndicator: true,
@@ -34,30 +47,29 @@ class _MenuPageState extends State<MenuPage>
         NavigationRailDestination(
           icon: const Icon(Icons.home_outlined),
           selectedIcon: const Icon(Icons.home_filled),
-          label: Text(items[0]),
+          label: Text(_items[0]),
         ),
         NavigationRailDestination(
           icon: const Icon(Icons.dataset_outlined),
           selectedIcon: const Icon(Icons.dataset_rounded),
-          label: Text(items[1]),
+          label: Text(_items[1]),
         ),
         NavigationRailDestination(
           icon: const Icon(Icons.dataset_linked_outlined),
           selectedIcon: const Icon(Icons.dataset_linked),
-          label: Text(items[2]),
+          label: Text(_items[2]),
         ),
         NavigationRailDestination(
           icon: const Icon(Icons.person_outlined),
           selectedIcon: const Icon(Icons.person),
-          label: Text(items[3]),
+          label: Text(_items[3]),
         ),
       ],
-      selectedIndex: _index,
+      selectedIndex: index,
       minWidth: MediaQuery.of(context).size.width * 0.05,
       onDestinationSelected: (value) {
-        setState(() {
-          _index = value;
-        });
+        ref.read(indexProvider.notifier).state = value;
+        _actionList[value](context);
       },
     );
   }

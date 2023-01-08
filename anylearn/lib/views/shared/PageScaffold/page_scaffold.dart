@@ -34,7 +34,7 @@ class _PageScaffoldState extends State<PageScaffold>
       body: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const MenuPage(actionList: []),
+          const MenuPage(),
           const VerticalDivider(
             width: 1.0,
             thickness: 1.0,

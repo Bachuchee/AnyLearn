@@ -84,6 +84,53 @@ class PocketClient {
     }
   }
 
+  static Future<List<Course>> getUserCourses(String userId) async {
+    try {
+      final List<Course> courses = [];
+      final List<String> existingCourses = [];
+      final topicList = await getTopics();
+
+      String? filter = 'user_id = "$userId"';
+
+      final courseList = await _client
+          .collection('course_topics')
+          .getList(filter: filter, sort: "-course");
+
+      for (var courseId in courseList.items) {
+        if (existingCourses.contains(courseId.data['course'])) {
+          continue;
+        }
+
+        var courseRecord =
+            await _client.collection('courses').getOne(courseId.data["course"]);
+
+        final userModel = await _client
+            .collection('users')
+            .getOne(courseRecord.data['user_id']);
+
+        final curCourse =
+            Course.fromJson(courseRecord.data, courseRecord, userModel);
+
+        final curTopics = await _client
+            .collection('course_topics')
+            .getList(filter: 'course = "${courseRecord.id}"');
+
+        for (var topic in curTopics.items) {
+          final curTopic = topicList
+              .firstWhere((element) => element.id == topic.data['topic']);
+          curCourse.addTopic(curTopic);
+        }
+
+        existingCourses.add(curCourse.id!);
+        courses.add(curCourse);
+      }
+
+      return courses;
+    } catch (e) {
+      return [];
+    }
+  }
+
   static RecordModel get model {
     return _client.authStore.model as RecordModel;
   }
