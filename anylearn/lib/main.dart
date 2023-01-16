@@ -7,6 +7,7 @@ import 'package:anylearn/views/login/login.dart';
 import 'package:anylearn/views/shared/PageScaffold/page_scaffold.dart';
 import 'package:anylearn/views/signup/signup.dart';
 import 'package:anylearn/views/user_courses/user_courses.dart';
+import 'package:anylearn/views/view_course/view_course.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -45,6 +46,12 @@ class MyApp extends StatelessWidget {
         path: '/new-course',
         name: 'NewCourse',
         builder: (context, state) => const CreateCourse(),
+      ),
+      GoRoute(
+        path: '/courses/:courseId',
+        name: 'ViewCourse',
+        builder: (context, state) =>
+            ViewCourse(courseId: state.params['courseId']!),
       ),
       GoRoute(
         path: '/login',

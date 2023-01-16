@@ -3,6 +3,11 @@ import 'package:flutter/material.dart';
 
 import '../../../models/topic.dart';
 
+const courseTagTemplate = "CourseImage_";
+const profileTagTemplate = "ProfileImage_";
+const textTagTemplate = "CourseTitle_";
+const usernameTemplate = "UserName_";
+
 class CourseCard extends StatefulWidget {
   const CourseCard({
     super.key,
@@ -10,13 +15,17 @@ class CourseCard extends StatefulWidget {
     this.courseImage,
     this.userImage,
     this.courseTitle,
+    this.courseId = "",
+    required this.onClick,
     required this.courseChips,
   });
 
   final ImageProvider? courseImage;
   final ImageProvider? userImage;
+  final void Function() onClick;
   final String? username;
   final String? courseTitle;
+  final String courseId;
   final List<Topic> courseChips;
 
   @override
@@ -49,23 +58,28 @@ class _CourseCardState extends State<CourseCard> {
                 Radius.circular(12.0),
               ),
             ),
-            onTap: () {},
+            onTap: () {
+              widget.onClick();
+            },
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
                   flex: 14,
-                  child: Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(12.0),
+                  child: Hero(
+                    tag: courseTagTemplate + widget.courseId,
+                    child: Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(12.0),
+                        ),
+                        color: Colors.grey,
+                        image: widget.courseImage != null
+                            ? DecorationImage(
+                                image: widget.courseImage!, fit: BoxFit.cover)
+                            : null,
                       ),
-                      color: Colors.grey,
-                      image: widget.courseImage != null
-                          ? DecorationImage(
-                              image: widget.courseImage!, fit: BoxFit.cover)
-                          : null,
                     ),
                   ),
                 ),
@@ -74,13 +88,16 @@ class _CourseCardState extends State<CourseCard> {
                   flex: 2,
                   child: Padding(
                     padding: const EdgeInsets.only(left: 8.0),
-                    child: Text(
-                      widget.courseTitle != null ? widget.courseTitle! : " ",
-                      textAlign: TextAlign.start,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
+                    child: Hero(
+                      tag: textTagTemplate + widget.courseId,
+                      child: Text(
+                        widget.courseTitle != null ? widget.courseTitle! : " ",
+                        textAlign: TextAlign.start,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),
@@ -92,26 +109,33 @@ class _CourseCardState extends State<CourseCard> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Container(
-                          height: 40.0,
-                          width: 40.0,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.grey,
-                            image: widget.userImage != null
-                                ? DecorationImage(
-                                    image: widget.userImage!, fit: BoxFit.cover)
-                                : null,
+                        Hero(
+                          tag: profileTagTemplate + widget.courseId,
+                          child: Container(
+                            height: 40.0,
+                            width: 40.0,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.grey,
+                              image: widget.userImage != null
+                                  ? DecorationImage(
+                                      image: widget.userImage!,
+                                      fit: BoxFit.cover)
+                                  : null,
+                            ),
                           ),
                         ),
                         const SizedBox(
                           width: 8.0,
                         ),
-                        Text(
-                          widget.username != null ? widget.username! : " ",
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                              fontSize: 14, color: secondaryColor),
+                        Hero(
+                          tag: usernameTemplate + widget.courseId,
+                          child: Text(
+                            widget.username != null ? widget.username! : " ",
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                                fontSize: 14, color: secondaryColor),
+                          ),
                         ),
                         const SizedBox(width: 4.0),
                         Expanded(

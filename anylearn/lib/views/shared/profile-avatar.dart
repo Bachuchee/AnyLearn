@@ -21,6 +21,7 @@ class _ProfileAvatarState extends State<ProfileAvatar> {
           Radius.circular(100.0),
         ),
       ),
+      color: const Color(0x00000000),
       child: InkWell(
         customBorder: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(
@@ -35,7 +36,7 @@ class _ProfileAvatarState extends State<ProfileAvatar> {
             width: 40.0,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.grey,
+              color: const Color(0x00000000),
               image: widget.userImage != null
                   ? DecorationImage(image: widget.userImage!, fit: BoxFit.cover)
                   : null,

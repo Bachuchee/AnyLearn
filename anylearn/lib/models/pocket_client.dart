@@ -125,6 +125,35 @@ class PocketClient {
     }
   }
 
+  static Future<Course> getCourseById(String id) async {
+    try {
+      final topicList = await getTopics();
+
+      final courseRecord = await _client.collection('courses').getOne(id);
+
+      final userModel = await _client
+          .collection('users')
+          .getOne(courseRecord.data['user_id']);
+
+      final course =
+          Course.fromJson(courseRecord.data, courseRecord, userModel);
+
+      final curTopics = await _client
+          .collection('course_topics')
+          .getList(filter: 'course = "${courseRecord.id}"');
+
+      for (var topic in curTopics.items) {
+        final curTopic = topicList
+            .firstWhere((element) => element.id == topic.data['topic']);
+        course.addTopic(curTopic);
+      }
+
+      return course;
+    } catch (e) {
+      return Course();
+    }
+  }
+
   static Future<bool> createCourse(
     Course newCourse,
     Uint8List courseImage,
