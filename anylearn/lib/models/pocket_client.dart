@@ -1,3 +1,4 @@
+import 'package:anylearn/models/episode.dart';
 import 'package:anylearn/models/topic.dart';
 import 'package:anylearn/models/user.dart';
 import 'package:flutter/foundation.dart';
@@ -181,6 +182,31 @@ class PocketClient {
       return true;
     } catch (e) {
       return false;
+    }
+  }
+
+  static Future<List<Episode>> getCourseEpisodes(Course course) async {
+    try {
+      final episodeModels = await _client.collection("episodes").getList(
+            filter: 'course_id = "${course.id}"',
+            sort: '+episode_number',
+          );
+
+      final List<Episode> episodeList = [];
+
+      for (final episodeModel in episodeModels.items) {
+        final newEpisode = Episode.fromJson(
+          episodeModel.data,
+          episodeModel,
+          course,
+        );
+
+        episodeList.add(newEpisode);
+      }
+
+      return episodeList;
+    } catch (e) {
+      return [];
     }
   }
 

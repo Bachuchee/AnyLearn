@@ -10,6 +10,8 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../models/episode.dart';
+
 final currentCourseProivder = StateProvider<Course>((ref) => Course());
 
 class ViewCourse extends ConsumerStatefulWidget {
@@ -24,6 +26,8 @@ class ViewCourse extends ConsumerStatefulWidget {
 class _ViewCourseState extends ConsumerState<ViewCourse> {
   final _client = PocketClient.client;
 
+  List<Episode> _episodeList = [];
+
   Future<void> getCourse() async {
     final course = ref.watch(currentCourseProivder);
     if (course.id != widget.courseId) {
@@ -32,17 +36,25 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
     }
   }
 
+  Future<void> getEpisodes() async {
+    final course = ref.watch(currentCourseProivder);
+    setState(
+      () async {
+        _episodeList = await PocketClient.getCourseEpisodes(course);
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
     getCourse();
+    getEpisodes();
   }
 
   @override
   Widget build(BuildContext context) {
     final course = ref.watch(currentCourseProivder);
-
-    var isExpanded = true;
 
     return Scaffold(
       body: CustomScrollView(
@@ -84,9 +96,6 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
             expandedHeight: 500.0,
             flexibleSpace: LayoutBuilder(
               builder: (BuildContext context, BoxConstraints constraints) {
-                isExpanded = !(constraints.biggest.height ==
-                    MediaQuery.of(context).padding.top + kToolbarHeight);
-
                 return FlexibleSpaceBar(
                   stretchModes: const [
                     StretchMode.zoomBackground,
@@ -186,7 +195,13 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
                 ),
                 const Padding(
                   padding: EdgeInsets.all(8.0),
-                  child: Text("Chapters:"),
+                  child: Text(
+                    "Chapters:",
+                    style: TextStyle(
+                      fontSize: 24.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ],
             ),
