@@ -3,6 +3,7 @@ import 'package:anylearn/models/course.dart';
 import 'package:anylearn/models/pocket_client.dart';
 import 'package:anylearn/views/home/components/CourseCard.dart';
 import 'package:anylearn/views/shared/profile-avatar.dart';
+import 'package:anylearn/views/view_course/components/episode_tile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -29,7 +30,7 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
   List<Episode> _episodeList = [];
 
   Future<void> getCourse() async {
-    final course = ref.watch(currentCourseProivder);
+    final course = ref.read(currentCourseProivder);
     if (course.id != widget.courseId) {
       ref.read(currentCourseProivder.notifier).state =
           await PocketClient.getCourseById(widget.courseId);
@@ -37,11 +38,13 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
   }
 
   Future<void> getEpisodes() async {
-    final course = ref.watch(currentCourseProivder);
-    setState(
-      () async {
-        _episodeList = await PocketClient.getCourseEpisodes(course);
-      },
+    final course = ref.read(currentCourseProivder);
+    PocketClient.getCourseEpisodes(course).then(
+      (value) => setState(
+        () {
+          _episodeList = value;
+        },
+      ),
     );
   }
 
@@ -55,6 +58,58 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
   @override
   Widget build(BuildContext context) {
     final course = ref.watch(currentCourseProivder);
+
+    List<Widget> widgetList = [
+      ListTile(
+        leading: Hero(
+          tag: profileTagTemplate + course.id,
+          child: ProfileAvatar(
+            userImage: NetworkImage(_client
+                .getFileUrl(
+                  course.user!.model!,
+                  course.user!.avatarName,
+                )
+                .toString()),
+          ),
+        ),
+        title: const Text("By"),
+        subtitle: Hero(
+          tag: usernameTemplate + course.id,
+          child: Text(
+            course.user!.username,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: secondaryColor,
+            ),
+          ),
+        ),
+      ),
+      ListTile(
+        leading: const Icon(Icons.description),
+        title: Text(course.description),
+      ),
+      const Divider(
+        height: 1.0,
+        thickness: 1.0,
+        indent: 16.0,
+        endIndent: 16.0,
+      ),
+      const Padding(
+        padding: EdgeInsets.all(8.0),
+        child: Text(
+          "Chapters:",
+          style: TextStyle(
+            fontSize: 24.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    ];
+
+    for (final episode in _episodeList) {
+      widgetList.add(EpisodeTile(episode));
+    }
 
     return Scaffold(
       body: CustomScrollView(
@@ -157,53 +212,7 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
           ),
           SliverList(
             delegate: SliverChildListDelegate(
-              <Widget>[
-                ListTile(
-                  leading: Hero(
-                    tag: profileTagTemplate + course.id,
-                    child: ProfileAvatar(
-                      userImage: NetworkImage(_client
-                          .getFileUrl(
-                            course.user!.model!,
-                            course.user!.avatarName,
-                          )
-                          .toString()),
-                    ),
-                  ),
-                  title: const Text("By"),
-                  subtitle: Hero(
-                    tag: usernameTemplate + course.id,
-                    child: Text(
-                      course.user!.username,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: secondaryColor,
-                      ),
-                    ),
-                  ),
-                ),
-                ListTile(
-                  leading: const Icon(Icons.description),
-                  title: Text(course.description),
-                ),
-                const Divider(
-                  height: 1.0,
-                  thickness: 1.0,
-                  indent: 16.0,
-                  endIndent: 16.0,
-                ),
-                const Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Text(
-                    "Chapters:",
-                    style: TextStyle(
-                      fontSize: 24.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
+              widgetList,
             ),
           ),
         ],

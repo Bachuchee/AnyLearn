@@ -203,9 +203,10 @@ class PocketClient {
 
         episodeList.add(newEpisode);
       }
-
+      print("I: ${episodeList.toString()}");
       return episodeList;
     } catch (e) {
+      print("failed");
       return [];
     }
   }
