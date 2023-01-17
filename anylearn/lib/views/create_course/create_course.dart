@@ -255,6 +255,7 @@ class _CreateCourseState extends ConsumerState<CreateCourse> {
                       ),
                     ),
                     CourseCard(
+                      onClick: () {},
                       courseChips: newCourseData.topics,
                       username: PocketClient.model.data['username'],
                       userImage: userAvatar,

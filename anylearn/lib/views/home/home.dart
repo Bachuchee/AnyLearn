@@ -1,9 +1,11 @@
 import 'package:anylearn/models/pocket_client.dart';
 import 'package:anylearn/views/home/components/home_filter.dart';
+import 'package:anylearn/views/view_course/view_course.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/course.dart';
 import 'components/CourseCard.dart';
+import 'package:go_router/go_router.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -19,6 +21,14 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   void initState() {
     super.initState();
+  }
+
+  Future<void> viewCourse(int selectedIndex) async {
+    ref.read(currentCourseProivder.notifier).state = _courses[selectedIndex];
+    context.goNamed(
+      "ViewCourse",
+      params: {'courseId': _courses[selectedIndex].id},
+    );
   }
 
   @override
@@ -56,7 +66,11 @@ class _HomePageState extends ConsumerState<HomePage> {
                 )
                 .toString(),
           ),
+          onClick: () {
+            viewCourse(index);
+          },
           courseChips: _courses[index].topics,
+          courseId: _courses[index].id,
         ),
       ),
     );

@@ -1,3 +1,4 @@
+import 'package:anylearn/models/episode.dart';
 import 'package:anylearn/models/topic.dart';
 import 'package:anylearn/models/user.dart';
 import 'package:flutter/foundation.dart';
@@ -125,6 +126,35 @@ class PocketClient {
     }
   }
 
+  static Future<Course> getCourseById(String id) async {
+    try {
+      final topicList = await getTopics();
+
+      final courseRecord = await _client.collection('courses').getOne(id);
+
+      final userModel = await _client
+          .collection('users')
+          .getOne(courseRecord.data['user_id']);
+
+      final course =
+          Course.fromJson(courseRecord.data, courseRecord, userModel);
+
+      final curTopics = await _client
+          .collection('course_topics')
+          .getList(filter: 'course = "${courseRecord.id}"');
+
+      for (var topic in curTopics.items) {
+        final curTopic = topicList
+            .firstWhere((element) => element.id == topic.data['topic']);
+        course.addTopic(curTopic);
+      }
+
+      return course;
+    } catch (e) {
+      return Course();
+    }
+  }
+
   static Future<bool> createCourse(
     Course newCourse,
     Uint8List courseImage,
@@ -152,6 +182,32 @@ class PocketClient {
       return true;
     } catch (e) {
       return false;
+    }
+  }
+
+  static Future<List<Episode>> getCourseEpisodes(Course course) async {
+    try {
+      final episodeModels = await _client.collection("episodes").getList(
+            filter: 'course_id = "${course.id}"',
+            sort: '+episode_number',
+          );
+
+      final List<Episode> episodeList = [];
+
+      for (final episodeModel in episodeModels.items) {
+        final newEpisode = Episode.fromJson(
+          episodeModel.data,
+          episodeModel,
+          course,
+        );
+
+        episodeList.add(newEpisode);
+      }
+      print("I: ${episodeList.toString()}");
+      return episodeList;
+    } catch (e) {
+      print("failed");
+      return [];
     }
   }
 

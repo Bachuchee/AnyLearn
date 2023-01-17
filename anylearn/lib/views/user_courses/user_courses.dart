@@ -64,6 +64,7 @@ class _UserCoursesState extends ConsumerState<UserCourses> {
             itemCount: _userCourses.length,
             shrinkWrap: true,
             itemBuilder: (context, index) => CourseCard(
+              onClick: () {},
               username: _userCourses[index].user!.username,
               courseTitle: _userCourses[index].title,
               courseImage: NetworkImage(
