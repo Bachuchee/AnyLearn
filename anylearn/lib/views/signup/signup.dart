@@ -1,12 +1,11 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'dart:io';
 
 import 'package:anylearn/Theme/colors.dart';
 import 'package:anylearn/controllers/auth_service.dart';
 import 'package:anylearn/controllers/file_service.dart';
 import 'package:anylearn/models/pocket_client.dart';
-import 'package:flutter/foundation.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -410,8 +409,8 @@ class _SignupPageState extends State<SignupPage> {
       appBar: AppBar(
         title: const Image(
           image: AssetImage('assets/images/Logo.png'),
-          width: 250.0,
-          height: 250.0,
+          width: 200.0,
+          height: 200.0,
         ),
         leading: IconButton(
           icon: const Icon(

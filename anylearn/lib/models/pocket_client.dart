@@ -1,5 +1,13 @@
+
+import 'package:anylearn/models/episode.dart';
 import 'package:anylearn/models/topic.dart';
+import 'package:anylearn/models/user.dart';
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart';
 import 'package:pocketbase/pocketbase.dart';
+
+import 'course.dart';
+
 
 class PocketClient {
   static final _client = PocketBase('http://127.0.0.1:8090');
@@ -26,6 +34,212 @@ class PocketClient {
     });
 
     return topics;
+  }
+
+  static Future<User> getUser(String id) async {
+    final userRecord = await _client.collection('users').getOne(id);
+    return User.fromJson(userRecord.data, userRecord);
+  }
+
+  static Future<List<Course>> getCourses(Topic? topicFilter) async {
+    try {
+      final List<Course> courses = [];
+      final List<String> existingCourses = [];
+      final topicList = await getTopics();
+
+      String? filter =
+          topicFilter == null ? null : 'topic = "${topicFilter.id}"';
+
+      final courseList = await _client
+          .collection('course_topics')
+          .getList(filter: filter, sort: "-course");
+
+      for (var courseId in courseList.items) {
+        if (existingCourses.contains(courseId.data['course'])) {
+          continue;
+        }
+
+        var courseRecord =
+            await _client.collection('courses').getOne(courseId.data["course"]);
+
+        final userModel = await _client
+            .collection('users')
+            .getOne(courseRecord.data['user_id']);
+
+        final curCourse =
+            Course.fromJson(courseRecord.data, courseRecord, userModel);
+
+        final curTopics = await _client
+            .collection('course_topics')
+            .getList(filter: 'course = "${courseRecord.id}"');
+
+        for (var topic in curTopics.items) {
+          final curTopic = topicList
+              .firstWhere((element) => element.id == topic.data['topic']);
+          curCourse.addTopic(curTopic);
+        }
+
+        existingCourses.add(curCourse.id);
+        courses.add(curCourse);
+      }
+
+      return courses;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  static Future<List<Course>> getUserCourses(String userId) async {
+    try {
+      final List<Course> courses = [];
+      final List<String> existingCourses = [];
+      final topicList = await getTopics();
+
+      String filter = 'user_id = "$userId"';
+
+      final courseList =
+          await _client.collection('courses').getList(filter: filter);
+
+      for (var courseRecord in courseList.items) {
+        final userModel = await _client
+            .collection('users')
+            .getOne(courseRecord.data['user_id']);
+
+        final curCourse =
+            Course.fromJson(courseRecord.data, courseRecord, userModel);
+
+        final curTopics = await _client
+            .collection('course_topics')
+            .getList(filter: 'course = "${courseRecord.id}"');
+
+        for (var topic in curTopics.items) {
+          final curTopic = topicList
+              .firstWhere((element) => element.id == topic.data['topic']);
+          curCourse.addTopic(curTopic);
+        }
+
+        existingCourses.add(curCourse.id);
+        courses.add(curCourse);
+      }
+
+      return courses;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  static Future<Course> getCourseById(String id) async {
+    try {
+      final topicList = await getTopics();
+
+      final courseRecord = await _client.collection('courses').getOne(id);
+
+      final userModel = await _client
+          .collection('users')
+          .getOne(courseRecord.data['user_id']);
+
+      final course =
+          Course.fromJson(courseRecord.data, courseRecord, userModel);
+
+      final curTopics = await _client
+          .collection('course_topics')
+          .getList(filter: 'course = "${courseRecord.id}"');
+
+      for (var topic in curTopics.items) {
+        final curTopic = topicList
+            .firstWhere((element) => element.id == topic.data['topic']);
+        course.addTopic(curTopic);
+      }
+
+      return course;
+    } catch (e) {
+      return Course();
+    }
+  }
+
+  static Future<bool> createCourse(
+    Course newCourse,
+    Uint8List courseImage,
+  ) async {
+    final courseData = newCourse.toJson();
+
+    final image = MultipartFile.fromBytes(
+      'image',
+      courseImage,
+      filename: 'courseImage.png',
+    );
+
+    try {
+      final courseRecord = await _client.collection('courses').create(
+        body: courseData,
+        files: [image],
+      );
+
+      for (final topic in newCourse.topics) {
+        final body = {'course': courseRecord.id, 'topic': topic.id};
+
+        await _client.collection('course_topics').create(body: body);
+      }
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  static Future<bool> createEpisode(
+    Episode newEpisode,
+    Uint8List episodeImage,
+    Uint8List episodeVideo,
+  ) async {
+    final episodeData = newEpisode.toJson();
+
+    final image = MultipartFile.fromBytes(
+      'thumbnail',
+      episodeImage,
+      filename: 'episodeImage.png',
+    );
+
+    final video = MultipartFile.fromBytes(
+      'video',
+      episodeVideo,
+      filename: 'episodeVideo.mp4',
+    );
+
+    try {
+      final episodeRecord = await _client.collection('episodes').create(
+        body: episodeData,
+        files: [image, video],
+      );
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  static Future<List<Episode>> getCourseEpisodes(Course course) async {
+    try {
+      final episodeModels = await _client.collection("episodes").getList(
+            filter: 'course_id = "${course.id}"',
+            sort: '+episode_number',
+          );
+
+      final List<Episode> episodeList = [];
+
+      for (final episodeModel in episodeModels.items) {
+        final newEpisode = Episode.fromJson(
+          episodeModel.data,
+          episodeModel,
+          course,
+        );
+
+        episodeList.add(newEpisode);
+      }
+      return episodeList;
+    } catch (e) {
+      return [];
+    }
   }
 
   static RecordModel get model {

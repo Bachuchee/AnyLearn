@@ -128,3 +128,7 @@ app.*.symbols
 
 # executables
 *.exe
+
+# pocketbase 
+*.db
+/anylearn/pocketbase/*
