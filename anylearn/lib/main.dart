@@ -1,6 +1,7 @@
 import 'package:anylearn/controllers/auth_service.dart';
 import 'package:anylearn/utils/specialscroll.dart';
 import 'package:anylearn/views/create_course/create_course.dart';
+import 'package:anylearn/views/create_episode/create_episode.dart';
 import 'package:anylearn/views/home/components/home_filter.dart';
 import 'package:anylearn/views/home/home.dart';
 import 'package:anylearn/views/login/login.dart';
@@ -46,6 +47,11 @@ class MyApp extends StatelessWidget {
         path: '/new-course',
         name: 'NewCourse',
         builder: (context, state) => const CreateCourse(),
+      ),
+      GoRoute(
+        path: '/new-episode',
+        name: 'NewEpisode',
+        builder: (context, state) => const CreateEpisode(),
       ),
       GoRoute(
         path: '/courses/:courseId',

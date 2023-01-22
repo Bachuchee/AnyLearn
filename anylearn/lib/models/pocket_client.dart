@@ -185,6 +185,37 @@ class PocketClient {
     }
   }
 
+  static Future<bool> createEpisode(
+    Episode newEpisode,
+    Uint8List episodeImage,
+    Uint8List episodeVideo,
+  ) async {
+    final episodeData = newEpisode.toJson();
+
+    final image = MultipartFile.fromBytes(
+      'thumbnail',
+      episodeImage,
+      filename: 'episodeImage.png',
+    );
+
+    final video = MultipartFile.fromBytes(
+      'video',
+      episodeVideo,
+      filename: 'episodeVideo.mp4',
+    );
+
+    try {
+      final episodeRecord = await _client.collection('episodes').create(
+        body: episodeData,
+        files: [image, video],
+      );
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   static Future<List<Episode>> getCourseEpisodes(Course course) async {
     try {
       final episodeModels = await _client.collection("episodes").getList(
@@ -203,10 +234,8 @@ class PocketClient {
 
         episodeList.add(newEpisode);
       }
-      print("I: ${episodeList.toString()}");
       return episodeList;
     } catch (e) {
-      print("failed");
       return [];
     }
   }

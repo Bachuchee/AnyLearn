@@ -5,6 +5,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 final indexProvider = StateProvider<int>((ref) => 0);
+const destinations = [
+  "Home",
+  "UserCourses",
+  // TODO: update destinations once they are added
+  "Home",
+  "Home",
+];
 
 class MenuPage extends ConsumerStatefulWidget {
   const MenuPage({super.key});

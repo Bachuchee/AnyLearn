@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../models/course.dart';
 import '../home/components/CourseCard.dart';
+import '../view_course/view_course.dart';
 
 class UserCourses extends ConsumerStatefulWidget {
   const UserCourses({super.key});
@@ -29,6 +30,15 @@ class _UserCoursesState extends ConsumerState<UserCourses> {
           _userCourses = value;
         },
       ),
+    );
+  }
+
+  Future<void> viewCourse(int selectedIndex) async {
+    ref.read(currentCourseProivder.notifier).state =
+        _userCourses[selectedIndex];
+    context.goNamed(
+      "ViewCourse",
+      params: {'courseId': _userCourses[selectedIndex].id},
     );
   }
 
@@ -64,7 +74,6 @@ class _UserCoursesState extends ConsumerState<UserCourses> {
             itemCount: _userCourses.length,
             shrinkWrap: true,
             itemBuilder: (context, index) => CourseCard(
-              onClick: () {},
               username: _userCourses[index].user!.username,
               courseTitle: _userCourses[index].title,
               courseImage: NetworkImage(
@@ -81,6 +90,9 @@ class _UserCoursesState extends ConsumerState<UserCourses> {
                     )
                     .toString(),
               ),
+              onClick: () {
+                viewCourse(index);
+              },
               courseChips: _userCourses[index].topics,
             ),
           ),
