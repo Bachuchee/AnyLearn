@@ -16,4 +16,19 @@ class FileService {
       return Uint8List(0);
     }
   }
+
+  static Future<Uint8List> getVideo() async {
+    try {
+      final imagePicker = ImagePicker();
+
+      final videoFile =
+          await imagePicker.pickVideo(source: ImageSource.gallery);
+
+      final videoData = await videoFile!.readAsBytes();
+
+      return videoData;
+    } catch (e) {
+      return Uint8List(0);
+    }
+  }
 }

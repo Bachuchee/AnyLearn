@@ -2,6 +2,7 @@ import 'package:anylearn/Theme/colors.dart';
 import 'package:anylearn/models/course.dart';
 import 'package:anylearn/models/pocket_client.dart';
 import 'package:anylearn/views/home/components/CourseCard.dart';
+import 'package:anylearn/views/menu/menu.dart';
 import 'package:anylearn/views/shared/profile-avatar.dart';
 import 'package:anylearn/views/view_course/components/episode_tile.dart';
 import 'package:flutter/cupertino.dart';
@@ -58,6 +59,7 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
   @override
   Widget build(BuildContext context) {
     final course = ref.watch(currentCourseProivder);
+    final isCreator = (PocketClient.model.id == course.user!.id);
 
     List<Widget> widgetList = [
       ListTile(
@@ -95,20 +97,36 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
         indent: 16.0,
         endIndent: 16.0,
       ),
-      const Padding(
-        padding: EdgeInsets.all(8.0),
-        child: Text(
-          "Chapters:",
-          style: TextStyle(
-            fontSize: 24.0,
-            fontWeight: FontWeight.bold,
+      Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: ListTile(
+          title: const Text(
+            "Chapters:",
+            style: TextStyle(
+              fontSize: 24.0,
+              fontWeight: FontWeight.bold,
+            ),
           ),
+          trailing: isCreator
+              ? IconButton(
+                  onPressed: () {
+                    context.goNamed('NewEpisode');
+                  },
+                  icon: const Icon(Icons.add))
+              : null,
         ),
       ),
     ];
 
     for (final episode in _episodeList) {
-      widgetList.add(EpisodeTile(episode));
+      widgetList.add(EpisodeTile(
+        episode,
+        image: NetworkImage(
+          _client
+              .getFileUrl(episode.episodeModel!, episode.thumbnailName)
+              .toString(),
+        ),
+      ));
     }
 
     return Scaffold(
@@ -135,7 +153,9 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
               icon: const Icon(Icons.arrow_back),
               color: Colors.white,
               onPressed: () {
-                context.goNamed("Home");
+                final destinationIndex = ref.watch(indexProvider);
+                String destination = destinations[destinationIndex];
+                context.goNamed(destination);
               },
             ),
             actions: [
