@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../Theme/colors.dart';
 import '../../models/pocket_client.dart';
@@ -30,6 +31,13 @@ class _ViewEpisodeState extends ConsumerState<ViewEpisode> {
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    getEpisode();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final episode = ref.watch(episodeProvider);
 
@@ -41,17 +49,15 @@ class _ViewEpisodeState extends ConsumerState<ViewEpisode> {
           height: 200.0,
           width: 200.0,
         ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          color: secondaryColor,
+          onPressed: () {
+            context.goNamed("ViewCourse",
+                params: {"courseId": episode.course!.id});
+          },
+        ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.search,
-                color: secondaryColor,
-              ),
-            ),
-          ),
           ProfileAvatar(
             userImage: NetworkImage(
               _client

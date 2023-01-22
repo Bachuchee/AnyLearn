@@ -4,6 +4,7 @@ import 'package:anylearn/models/pocket_client.dart';
 import 'package:anylearn/views/home/components/CourseCard.dart';
 import 'package:anylearn/views/shared/profile-avatar.dart';
 import 'package:anylearn/views/view_course/components/episode_tile.dart';
+import 'package:anylearn/views/view_episode/view_episode.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
@@ -53,6 +54,12 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
     super.initState();
     getCourse();
     getEpisodes();
+  }
+
+  void viewEpisode(Episode episode) {
+    ref.read(episodeProvider.notifier).state = episode;
+    context.goNamed("ViewEpisode",
+        params: {"episodeId": episode.episodeModel!.id});
   }
 
   @override
@@ -108,7 +115,12 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
     ];
 
     for (final episode in _episodeList) {
-      widgetList.add(EpisodeTile(episode));
+      widgetList.add(EpisodeTile(
+        episode,
+        onClick: () {
+          viewEpisode(episode);
+        },
+      ));
     }
 
     return Scaffold(

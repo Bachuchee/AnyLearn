@@ -6,9 +6,10 @@ import 'package:flutter/src/widgets/framework.dart';
 import '../../../models/episode.dart';
 
 class EpisodeTile extends StatefulWidget {
-  const EpisodeTile(this.episode, {super.key});
+  const EpisodeTile(this.episode, {super.key, this.onClick});
 
   final Episode episode;
+  final void Function()? onClick;
 
   @override
   State<EpisodeTile> createState() => _EpisodeTileState();
@@ -23,7 +24,7 @@ class _EpisodeTileState extends State<EpisodeTile> {
       padding: const EdgeInsets.all(8.0),
       child: Material(
         child: InkWell(
-          onTap: () {},
+          onTap: widget.onClick,
           mouseCursor: MaterialStateMouseCursor.clickable,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
