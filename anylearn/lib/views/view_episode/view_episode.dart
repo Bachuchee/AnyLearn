@@ -1,17 +1,12 @@
 import 'package:anylearn/models/episode.dart';
-import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pod_player/pod_player.dart';
-import 'package:video_player/video_player.dart';
 
 import '../../Theme/colors.dart';
 import '../../models/pocket_client.dart';
 import '../shared/profile-avatar.dart';
-import '../view_course/view_course.dart';
 
 final episodeProvider = StateProvider<Episode>((ref) => Episode());
 
