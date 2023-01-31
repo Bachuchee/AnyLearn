@@ -131,6 +131,11 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
         onClick: () {
           viewEpisode(episode);
         },
+        image: NetworkImage(
+          _client
+              .getFileUrl(episode.episodeModel!, episode.thumbnailName)
+              .toString(),
+        ),
       ));
     }
 

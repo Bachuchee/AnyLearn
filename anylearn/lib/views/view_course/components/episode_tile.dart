@@ -7,10 +7,11 @@ import 'package:flutter/src/widgets/framework.dart';
 import '../../../models/episode.dart';
 
 class EpisodeTile extends StatefulWidget {
-  const EpisodeTile(this.episode, {super.key, this.onClick});
+  const EpisodeTile(this.episode, {super.key, this.onClick, this.image});
 
   final Episode episode;
   final void Function()? onClick;
+  final ImageProvider<Object>? image;
 
   @override
   State<EpisodeTile> createState() => _EpisodeTileState();
