@@ -1,6 +1,7 @@
 import 'package:anylearn/Theme/colors.dart';
 import 'package:anylearn/models/course.dart';
 import 'package:anylearn/models/pocket_client.dart';
+import 'package:anylearn/models/view_status.dart';
 import 'package:anylearn/views/home/components/CourseCard.dart';
 import 'package:anylearn/views/menu/menu.dart';
 import 'package:anylearn/views/shared/profile-avatar.dart';
@@ -31,12 +32,24 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
 
   List<Episode> _episodeList = [];
 
+  ViewStatus? _status;
+
   Future<void> getCourse() async {
     final course = ref.read(currentCourseProivder);
     if (course.id != widget.courseId) {
       ref.read(currentCourseProivder.notifier).state =
           await PocketClient.getCourseById(widget.courseId);
     }
+    getStatus();
+  }
+
+  Future<void> getStatus() async {
+    final course = ref.read(currentCourseProivder);
+    _status = await PocketClient.getSavedPosition(
+      PocketClient.model.id,
+      course.id,
+      -1,
+    );
   }
 
   Future<void> getEpisodes() async {
@@ -59,8 +72,12 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
 
   void viewEpisode(Episode episode) {
     ref.read(episodeProvider.notifier).state = episode;
-    context.goNamed("ViewEpisode",
-        params: {"episodeId": episode.episodeModel!.id});
+    context.goNamed(
+      "ViewEpisode",
+      params: {
+        "episodeId": episode.episodeModel!.id,
+      },
+    );
   }
 
   @override
@@ -104,6 +121,38 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
         indent: 16.0,
         endIndent: 16.0,
       ),
+      if (_status != null && _status!.episodeNumber > 0)
+        const ListTile(
+          title: Text(
+            "Continue watching:",
+            style: TextStyle(
+              fontSize: 24.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      if (_status != null && _status!.episodeNumber > 0)
+        EpisodeTile(
+          _episodeList[_status!.episodeNumber - 1],
+          onClick: () {
+            viewEpisode(_episodeList[_status!.episodeNumber - 1]);
+          },
+          image: NetworkImage(
+            _client
+                .getFileUrl(
+                  _episodeList[_status!.episodeNumber - 1].episodeModel!,
+                  _episodeList[_status!.episodeNumber - 1].thumbnailName,
+                )
+                .toString(),
+          ),
+        ),
+      if (_status != null && _status!.episodeNumber > 0)
+        const Divider(
+          height: 1.0,
+          thickness: 1.0,
+          indent: 16.0,
+          endIndent: 16.0,
+        ),
       Padding(
         padding: const EdgeInsets.all(8.0),
         child: ListTile(

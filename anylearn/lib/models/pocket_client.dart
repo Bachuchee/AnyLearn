@@ -1,6 +1,8 @@
+import 'package:anylearn/controllers/duration_service.dart';
 import 'package:anylearn/models/episode.dart';
 import 'package:anylearn/models/topic.dart';
 import 'package:anylearn/models/user.dart';
+import 'package:anylearn/models/view_status.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 import 'package:pocketbase/pocketbase.dart';
@@ -161,6 +163,35 @@ class PocketClient {
     }
   }
 
+  static Future<ViewStatus> getSavedPosition(
+    String userId,
+    String courseId,
+    int epNumber,
+  ) async {
+    try {
+      final statusList = await _client.collection("course_status").getList(
+            filter: 'user_id = "$userId" && course_id = "$courseId"',
+            sort: "-created",
+          );
+
+      if (statusList.items.length > 1) {
+        for (var item in statusList.items.sublist(1)) {
+          _client.collection('course_status').delete(item.id);
+        }
+      }
+      final status = statusList.items[0];
+
+      if (status.data["current_episode"] != epNumber) {
+        return ViewStatus(status.data["current_episode"], Duration.zero);
+      }
+      print("got here bro");
+      return ViewStatus(epNumber, parseDuration(status.data["position"]));
+    } catch (e) {
+      print("failed");
+      return const ViewStatus(-1, Duration.zero);
+    }
+  }
+
   static Future<void> updateWatchStatus(
     String courseId,
     String userId,
@@ -169,7 +200,6 @@ class PocketClient {
     bool hasBeenCreated,
   ) async {
     try {
-      print(pos.toString());
       final status = await _client.collection("course_status").getList(
           filter: 'user_id = "$userId" && course_id = "$courseId"',
           sort: "-created");
@@ -196,9 +226,7 @@ class PocketClient {
             .collection("course_status")
             .update(status.items[0].id, body: body);
       }
-    } catch (e) {
-      print("failed");
-    }
+    } catch (e) {}
   }
 
   static Future<bool> createCourse(

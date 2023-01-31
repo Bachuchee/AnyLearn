@@ -26,13 +26,23 @@ class _ViewEpisodeState extends ConsumerState<ViewEpisode> {
 
   late final Future<void> _initVid;
 
+  Duration _startPosition = Duration.zero;
+
   late final PodPlayerController _podController;
 
   Future<void> setUpData() async {
     ref.read(episodeProvider.notifier).state =
         await PocketClient.getEpisode(widget.episodeId);
 
-    final episode = ref.watch(episodeProvider);
+    final episode = ref.read(episodeProvider);
+
+    final status = await PocketClient.getSavedPosition(
+      PocketClient.model.id,
+      episode.course!.id,
+      episode.episodeNumber,
+    );
+
+    _startPosition = status.position;
 
     _podController = PodPlayerController(
       playVideoFrom: PlayVideoFrom.network(
@@ -49,6 +59,9 @@ class _ViewEpisodeState extends ConsumerState<ViewEpisode> {
           episode.episodeNumber,
           _created,
         );
+        if (!_created) {
+          _podController.videoSeekTo(_startPosition);
+        }
         _created = true;
       },
     );
