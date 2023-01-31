@@ -9,6 +9,7 @@ class Episode {
     this.description = "",
     this.thumbnailName = "",
     this.videoName = "",
+    this.course,
   });
 
   int episodeNumber;
@@ -28,4 +29,11 @@ class Episode {
         description = json['description'],
         thumbnailName = json['thumbnail'],
         videoName = json['video'];
+
+  Map<String, dynamic> toJson() => {
+        'episode_number': episodeNumber,
+        'title': title,
+        'description': description,
+        'course_id': course!.id,
+      };
 }

@@ -1,3 +1,4 @@
+
 import 'package:anylearn/models/episode.dart';
 import 'package:anylearn/models/topic.dart';
 import 'package:anylearn/models/user.dart';
@@ -6,6 +7,7 @@ import 'package:http/http.dart';
 import 'package:pocketbase/pocketbase.dart';
 
 import 'course.dart';
+
 
 class PocketClient {
   static final _client = PocketBase('http://127.0.0.1:8090');
@@ -191,6 +193,37 @@ class PocketClient {
     }
   }
 
+  static Future<bool> createEpisode(
+    Episode newEpisode,
+    Uint8List episodeImage,
+    Uint8List episodeVideo,
+  ) async {
+    final episodeData = newEpisode.toJson();
+
+    final image = MultipartFile.fromBytes(
+      'thumbnail',
+      episodeImage,
+      filename: 'episodeImage.png',
+    );
+
+    final video = MultipartFile.fromBytes(
+      'video',
+      episodeVideo,
+      filename: 'episodeVideo.mp4',
+    );
+
+    try {
+      final episodeRecord = await _client.collection('episodes').create(
+        body: episodeData,
+        files: [image, video],
+      );
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
   static Future<List<Episode>> getCourseEpisodes(Course course) async {
     try {
       final episodeModels = await _client.collection("episodes").getList(
@@ -209,10 +242,8 @@ class PocketClient {
 
         episodeList.add(newEpisode);
       }
-      print("I: ${episodeList.toString()}");
       return episodeList;
     } catch (e) {
-      print("failed");
       return [];
     }
   }

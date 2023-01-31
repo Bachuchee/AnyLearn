@@ -1,6 +1,8 @@
 import 'package:anylearn/controllers/auth_service.dart';
+
 import 'package:anylearn/utils/specialscroll.dart';
 import 'package:anylearn/views/create_course/create_course.dart';
+import 'package:anylearn/views/create_episode/create_episode.dart';
 import 'package:anylearn/views/home/components/home_filter.dart';
 import 'package:anylearn/views/home/home.dart';
 import 'package:anylearn/views/login/login.dart';
@@ -16,6 +18,7 @@ import 'package:go_router/go_router.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AuthService.refreshAuth();
+
   runApp(
     ProviderScope(
       child: MyApp(),
@@ -31,6 +34,7 @@ class MyApp extends StatelessWidget {
       GoRoute(
         path: '/',
         name: 'Home',
+
         builder: (context, state) => const PageScaffold(
           content: HomePage(),
           appbarExtension: HomeFilters(),
@@ -49,10 +53,16 @@ class MyApp extends StatelessWidget {
         builder: (context, state) => const CreateCourse(),
       ),
       GoRoute(
+        path: '/new-episode',
+        name: 'NewEpisode',
+        builder: (context, state) => const CreateEpisode(),
+      ),
+      GoRoute(
         path: '/courses/:courseId',
         name: 'ViewCourse',
         builder: (context, state) =>
             ViewCourse(courseId: state.params['courseId']!),
+
       ),
       GoRoute(
         path: '/episodes/:episodeId',
@@ -73,13 +83,16 @@ class MyApp extends StatelessWidget {
       )
     ],
     redirect: (context, state) async {
+
       final bool isLoggingIn =
           state.subloc == "/login" || state.subloc == '/signup';
 
       if (await AuthService.checkAuth()) {
         return null;
       } else {
+
         return isLoggingIn ? null : '/login';
+
       }
     },
   );
@@ -90,7 +103,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       title: 'AnyLearn',
       debugShowCheckedModeBanner: false,
+
       scrollBehavior: ChipListScroll(),
+
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),

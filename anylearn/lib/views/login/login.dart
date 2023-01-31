@@ -16,6 +16,7 @@ class _LoginPageState extends State<LoginPage> {
       appBar: AppBar(
         title: const Image(
           image: AssetImage('assets/images/Logo.png'),
+
           width: 200.0,
           height: 200.0,
         ),
