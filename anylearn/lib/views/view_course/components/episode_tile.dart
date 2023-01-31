@@ -7,9 +7,10 @@ import 'package:flutter/src/widgets/framework.dart';
 import '../../../models/episode.dart';
 
 class EpisodeTile extends StatefulWidget {
-  const EpisodeTile(this.episode, {super.key, this.image});
+  const EpisodeTile(this.episode, {super.key, this.onClick, this.image});
 
   final Episode episode;
+  final void Function()? onClick;
   final ImageProvider<Object>? image;
 
   @override
@@ -25,7 +26,7 @@ class _EpisodeTileState extends State<EpisodeTile> {
       padding: const EdgeInsets.all(8.0),
       child: Material(
         child: InkWell(
-          onTap: () {},
+          onTap: widget.onClick,
           mouseCursor: MaterialStateMouseCursor.clickable,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
