@@ -10,6 +10,7 @@ import 'package:pocketbase/pocketbase.dart';
 
 import 'course.dart';
 
+
 class PocketClient {
   static final _client = PocketBase('http://127.0.0.1:8090');
 
@@ -42,6 +43,7 @@ class PocketClient {
     return User.fromJson(userRecord.data, userRecord);
   }
 
+
   static Future<Episode> getEpisode(String id) async {
     final episodeModel = await _client.collection('episodes').getOne(id);
     final course = await getCourseById(episodeModel.data['course_id']);
@@ -69,6 +71,7 @@ class PocketClient {
       return [];
     }
   }
+
 
   static Future<List<Course>> getCourses(Topic? topicFilter) async {
     try {
@@ -186,6 +189,7 @@ class PocketClient {
     }
   }
 
+
   static Future<ViewStatus> getSavedPosition(
     String userId,
     String courseId,
@@ -251,6 +255,7 @@ class PocketClient {
       }
     } catch (e) {}
   }
+
 
   static Future<bool> createCourse(
     Course newCourse,

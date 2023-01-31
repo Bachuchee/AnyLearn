@@ -32,6 +32,7 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
 
   List<Episode> _episodeList = [];
 
+
   ViewStatus? _status;
 
   Future<void> getCourse() async {
