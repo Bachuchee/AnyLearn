@@ -1,4 +1,3 @@
-
 import 'package:anylearn/models/episode.dart';
 import 'package:anylearn/models/topic.dart';
 import 'package:anylearn/models/user.dart';
@@ -7,7 +6,6 @@ import 'package:http/http.dart';
 import 'package:pocketbase/pocketbase.dart';
 
 import 'course.dart';
-
 
 class PocketClient {
   static final _client = PocketBase('http://127.0.0.1:8090');
@@ -160,6 +158,46 @@ class PocketClient {
       return course;
     } catch (e) {
       return Course();
+    }
+  }
+
+  static Future<void> updateWatchStatus(
+    String courseId,
+    String userId,
+    Duration pos,
+    int epNumber,
+    bool hasBeenCreated,
+  ) async {
+    try {
+      print(pos.toString());
+      final status = await _client.collection("course_status").getList(
+          filter: 'user_id = "$userId" && course_id = "$courseId"',
+          sort: "-created");
+
+      if (status.items.length > 1) {
+        for (var item in status.items.sublist(1)) {
+          _client.collection('course_status').delete(item.id);
+        }
+      }
+      if (status.items.isEmpty || !hasBeenCreated) {
+        final body = {
+          "user_id": userId,
+          "course_id": courseId,
+          "current_episode": epNumber,
+          "position": pos.toString(),
+        };
+        await _client.collection("course_status").create(body: body);
+      } else {
+        final body = {
+          "current_episode": epNumber,
+          "position": pos.toString(),
+        };
+        await _client
+            .collection("course_status")
+            .update(status.items[0].id, body: body);
+      }
+    } catch (e) {
+      print("failed");
     }
   }
 

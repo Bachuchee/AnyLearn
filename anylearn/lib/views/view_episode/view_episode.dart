@@ -22,6 +22,8 @@ class ViewEpisode extends ConsumerStatefulWidget {
 class _ViewEpisodeState extends ConsumerState<ViewEpisode> {
   final _client = PocketClient.client;
 
+  bool _created = false;
+
   late final Future<void> _initVid;
 
   late final PodPlayerController _podController;
@@ -37,6 +39,19 @@ class _ViewEpisodeState extends ConsumerState<ViewEpisode> {
         _client.getFileUrl(episode.episodeModel!, episode.videoName).toString(),
       ),
     )..initialise();
+
+    _podController.addListener(
+      () {
+        PocketClient.updateWatchStatus(
+          episode.course!.id,
+          PocketClient.model.id,
+          _podController.videoPlayerValue!.position,
+          episode.episodeNumber,
+          _created,
+        );
+        _created = true;
+      },
+    );
   }
 
   @override
