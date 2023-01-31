@@ -3,6 +3,7 @@ import 'package:anylearn/models/episode.dart';
 import 'package:anylearn/models/topic.dart';
 import 'package:anylearn/models/user.dart';
 import 'package:anylearn/models/view_status.dart';
+import 'package:anylearn/views/view_course/view_course.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart';
 import 'package:pocketbase/pocketbase.dart';
@@ -45,6 +46,28 @@ class PocketClient {
     final episodeModel = await _client.collection('episodes').getOne(id);
     final course = await getCourseById(episodeModel.data['course_id']);
     return Episode.fromJson(episodeModel.data, episodeModel, course);
+  }
+
+  static Future<List<Course>> getOngoingCourses(Topic? topicFilter) async {
+    try {
+      final List<Course> courses = [];
+      final courseList = await _client
+          .collection('course_status')
+          .getList(filter: 'user_id = "${model.id}"');
+      for (var courseModel in courseList.items) {
+        final curCourse = await getCourseById(courseModel.data['course_id']);
+        final topicNames = <String>[];
+        for (var element in curCourse.topics) {
+          topicNames.add(element.name);
+        }
+        if (topicFilter == null || topicNames.contains(topicFilter.name)) {
+          courses.add(curCourse);
+        }
+      }
+      return courses;
+    } catch (e) {
+      return [];
+    }
   }
 
   static Future<List<Course>> getCourses(Topic? topicFilter) async {

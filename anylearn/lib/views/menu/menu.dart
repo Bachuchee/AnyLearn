@@ -9,7 +9,7 @@ const destinations = [
   "Home",
   "UserCourses",
   // TODO: update destinations once they are added
-  "Home",
+  "OngoingCourses",
   "Home",
 ];
 
@@ -36,7 +36,9 @@ class _MenuPageState extends ConsumerState<MenuPage>
     (BuildContext context) {
       context.go('/user-courses');
     },
-    (BuildContext context) {},
+    (BuildContext context) {
+      context.go('/ongoing-courses');
+    },
     (BuildContext context) {},
   ];
 
