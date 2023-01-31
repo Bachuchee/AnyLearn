@@ -6,6 +6,8 @@ import 'package:anylearn/views/create_episode/create_episode.dart';
 import 'package:anylearn/views/home/components/home_filter.dart';
 import 'package:anylearn/views/home/home.dart';
 import 'package:anylearn/views/login/login.dart';
+import 'package:anylearn/views/ongoing_courses/ongoing_courses.dart';
+
 import 'package:anylearn/views/shared/PageScaffold/page_scaffold.dart';
 import 'package:anylearn/views/signup/signup.dart';
 import 'package:anylearn/views/user_courses/user_courses.dart';
@@ -34,7 +36,6 @@ class MyApp extends StatelessWidget {
       GoRoute(
         path: '/',
         name: 'Home',
-
         builder: (context, state) => const PageScaffold(
           content: HomePage(),
           appbarExtension: HomeFilters(),
@@ -45,6 +46,14 @@ class MyApp extends StatelessWidget {
         name: 'UserCourses',
         builder: (context, state) => const PageScaffold(
           content: UserCourses(),
+        ),
+      ),
+      GoRoute(
+        path: '/ongoing-courses',
+        name: 'OngoingCourses',
+        builder: (context, state) => const PageScaffold(
+          content: OngoingCourses(),
+          appbarExtension: HomeFilters(),
         ),
       ),
       GoRoute(
@@ -62,7 +71,6 @@ class MyApp extends StatelessWidget {
         name: 'ViewCourse',
         builder: (context, state) =>
             ViewCourse(courseId: state.params['courseId']!),
-
       ),
       GoRoute(
         path: '/episodes/:episodeId',
@@ -83,16 +91,13 @@ class MyApp extends StatelessWidget {
       )
     ],
     redirect: (context, state) async {
-
       final bool isLoggingIn =
           state.subloc == "/login" || state.subloc == '/signup';
 
       if (await AuthService.checkAuth()) {
         return null;
       } else {
-
         return isLoggingIn ? null : '/login';
-
       }
     },
   );
@@ -103,9 +108,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       title: 'AnyLearn',
       debugShowCheckedModeBanner: false,
-
       scrollBehavior: ChipListScroll(),
-
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
