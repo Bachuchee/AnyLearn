@@ -41,6 +41,12 @@ class PocketClient {
     return User.fromJson(userRecord.data, userRecord);
   }
 
+  static Future<Episode> getEpisode(String id) async {
+    final episodeModel = await _client.collection('episodes').getOne(id);
+    final course = await getCourseById(episodeModel.data['course_id']);
+    return Episode.fromJson(episodeModel.data, episodeModel, course);
+  }
+
   static Future<List<Course>> getCourses(Topic? topicFilter) async {
     try {
       final List<Course> courses = [];
