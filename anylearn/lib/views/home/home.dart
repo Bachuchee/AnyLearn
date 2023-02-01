@@ -70,6 +70,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             viewCourse(index);
           },
           courseChips: _courses[index].topics,
+          courseRating: _courses[index].rating,
           courseId: _courses[index].id,
         ),
       ),

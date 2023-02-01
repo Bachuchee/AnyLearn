@@ -3,15 +3,18 @@ import 'package:anylearn/models/user.dart';
 import 'package:pocketbase/pocketbase.dart';
 
 class Course {
-  Course(
-      {this.id = '',
-      this.title = '',
-      this.description = '',
-      this.user,
-      this.imageName = '',
-      this.model});
+  Course({
+    this.id = '',
+    this.title = '',
+    this.description = '',
+    this.user,
+    this.imageName = '',
+    this.model,
+    this.rating = 0,
+  });
 
   final String id;
+  double rating = 0;
   String title;
   String description;
   String imageName;
