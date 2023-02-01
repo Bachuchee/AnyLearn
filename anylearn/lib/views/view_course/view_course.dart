@@ -11,6 +11,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -32,6 +33,7 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
 
   List<Episode> _episodeList = [];
 
+  double _rating = 0;
 
   ViewStatus? _status;
 
@@ -42,6 +44,7 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
           await PocketClient.getCourseById(widget.courseId);
     }
     getStatus();
+    await getUserRating();
   }
 
   Future<void> getStatus() async {
@@ -50,6 +53,14 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
       PocketClient.model.id,
       course.id,
       -1,
+    );
+  }
+
+  Future<void> getUserRating() async {
+    final course = ref.read(currentCourseProivder);
+    _rating = await PocketClient.getUserRating(
+      PocketClient.model.id,
+      course.id,
     );
   }
 
@@ -110,6 +121,25 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
               color: secondaryColor,
             ),
           ),
+        ),
+        trailing: RatingBar.builder(
+          allowHalfRating: true,
+          initialRating: _rating,
+          minRating: 0,
+          itemCount: 5,
+          direction: Axis.horizontal,
+          itemPadding: const EdgeInsets.all(4.0),
+          itemBuilder: (context, _) => const Icon(
+            Icons.star,
+            color: Colors.amber,
+          ),
+          onRatingUpdate: (rating) {
+            PocketClient.updateCourseRating(
+              PocketClient.model.id,
+              course.id,
+              rating,
+            );
+          },
         ),
       ),
       ListTile(
