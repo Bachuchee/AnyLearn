@@ -334,7 +334,10 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
                       if (course.rating > 0)
                         Align(
                           alignment: Alignment.bottomRight,
-                          child: CourseRating(_courseRating),
+                          child: Hero(
+                            tag: ratingTemplate + course.id,
+                            child: CourseRating(_courseRating),
+                          ),
                         ),
                     ],
                   ),

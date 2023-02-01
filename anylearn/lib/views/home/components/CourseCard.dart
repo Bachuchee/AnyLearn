@@ -8,6 +8,7 @@ const courseTagTemplate = "CourseImage_";
 const profileTagTemplate = "ProfileImage_";
 const textTagTemplate = "CourseTitle_";
 const usernameTemplate = "UserName_";
+const ratingTemplate = "Rating_";
 
 class CourseCard extends StatefulWidget {
   const CourseCard({
@@ -91,7 +92,10 @@ class _CourseCardState extends State<CourseCard> {
                       if (widget.courseRating > 0)
                         Align(
                           alignment: Alignment.topRight,
-                          child: CourseRating(widget.courseRating),
+                          child: Hero(
+                            tag: ratingTemplate + widget.courseId,
+                            child: CourseRating(widget.courseRating),
+                          ),
                         ),
                     ],
                   ),

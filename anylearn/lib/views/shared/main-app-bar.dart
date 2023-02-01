@@ -38,7 +38,7 @@ class _MainAppBarState extends State<MainAppBar> {
           child: IconButton(
             onPressed: () {},
             icon: const Icon(
-              Icons.search,
+              Icons.notifications_none,
               color: secondaryColor,
             ),
           ),
