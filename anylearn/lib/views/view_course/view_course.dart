@@ -16,6 +16,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../models/episode.dart';
+import '../shared/course_rating.dart';
 
 final currentCourseProivder = StateProvider<Course>((ref) => Course());
 
@@ -33,7 +34,8 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
 
   List<Episode> _episodeList = [];
 
-  double _rating = 0;
+  double _myRating = 0;
+  double _courseRating = 0;
 
   ViewStatus? _status;
 
@@ -44,7 +46,7 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
           await PocketClient.getCourseById(widget.courseId);
     }
     getStatus();
-    await getUserRating();
+    await getRatings();
   }
 
   Future<void> getStatus() async {
@@ -56,12 +58,13 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
     );
   }
 
-  Future<void> getUserRating() async {
+  Future<void> getRatings() async {
     final course = ref.read(currentCourseProivder);
-    _rating = await PocketClient.getUserRating(
+    _myRating = await PocketClient.getUserRating(
       PocketClient.model.id,
       course.id,
     );
+    liveRating(course.id);
   }
 
   Future<void> getEpisodes() async {
@@ -73,6 +76,24 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
         },
       ),
     );
+  }
+
+  Future<void> updateRatings(double rating, String courseId) async {
+    PocketClient.updateCourseRating(
+      PocketClient.model.id,
+      courseId,
+      rating,
+    );
+  }
+
+  Future<void> liveRating(courseId) async {
+    while (true) {
+      double newRating = await PocketClient.getCourseRating(courseId);
+      setState(() {
+        _courseRating = newRating;
+      });
+      await Future.delayed(const Duration(milliseconds: 500));
+    }
   }
 
   @override
@@ -124,7 +145,7 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
         ),
         trailing: RatingBar.builder(
           allowHalfRating: true,
-          initialRating: _rating,
+          initialRating: _myRating,
           minRating: 0,
           itemCount: 5,
           direction: Axis.horizontal,
@@ -134,11 +155,7 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
             color: Colors.amber,
           ),
           onRatingUpdate: (rating) {
-            PocketClient.updateCourseRating(
-              PocketClient.model.id,
-              course.id,
-              rating,
-            );
+            updateRatings(rating, course.id);
           },
         ),
       ),
@@ -314,6 +331,11 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
                           ),
                         ),
                       ),
+                      if (course.rating > 0)
+                        Align(
+                          alignment: Alignment.bottomRight,
+                          child: CourseRating(_courseRating),
+                        ),
                     ],
                   ),
                 );
