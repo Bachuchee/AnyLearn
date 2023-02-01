@@ -93,6 +93,7 @@ class _UserCoursesState extends ConsumerState<UserCourses> {
               onClick: () {
                 viewCourse(index);
               },
+              courseRating: _userCourses[index].rating,
               courseChips: _userCourses[index].topics,
             ),
           ),

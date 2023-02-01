@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:anylearn/controllers/duration_service.dart';
 import 'package:anylearn/models/episode.dart';
 import 'package:anylearn/models/topic.dart';
@@ -9,7 +11,6 @@ import 'package:http/http.dart';
 import 'package:pocketbase/pocketbase.dart';
 
 import 'course.dart';
-
 
 class PocketClient {
   static final _client = PocketBase('http://127.0.0.1:8090');
@@ -43,7 +44,6 @@ class PocketClient {
     return User.fromJson(userRecord.data, userRecord);
   }
 
-
   static Future<Episode> getEpisode(String id) async {
     final episodeModel = await _client.collection('episodes').getOne(id);
     final course = await getCourseById(episodeModel.data['course_id']);
@@ -72,6 +72,39 @@ class PocketClient {
     }
   }
 
+  static Future<void> updateCourseRating(
+    String userId,
+    String courseId,
+    double rating,
+  ) async {
+    try {
+      final userRatingModels =
+          await _client.collection('course_ratings').getList(
+                filter: 'user_id = "$userId" && course_id = "$courseId"',
+              );
+
+      if (userRatingModels.items.length > 1) {
+        for (var item in userRatingModels.items.sublist(1)) {
+          _client.collection('course_status').delete(item.id);
+        }
+      }
+
+      if (userRatingModels.items.isEmpty) {
+        final body = {
+          'user_id': userId,
+          'course_id': courseId,
+          'rating': rating,
+        };
+        await _client.collection('course_ratings').create(body: body);
+      } else {
+        final body = {'rating': rating};
+        await _client.collection('course_ratings').update(
+              userRatingModels.items.first.id,
+              body: body,
+            );
+      }
+    } catch (e) {}
+  }
 
   static Future<List<Course>> getCourses(Topic? topicFilter) async {
     try {
@@ -111,6 +144,8 @@ class PocketClient {
           curCourse.addTopic(curTopic);
         }
 
+        curCourse.rating = await getCourseRating(curCourse.id);
+
         existingCourses.add(curCourse.id);
         courses.add(curCourse);
       }
@@ -118,6 +153,41 @@ class PocketClient {
       return courses;
     } catch (e) {
       return [];
+    }
+  }
+
+  static Future<double> getUserRating(String userId, String courseId) async {
+    try {
+      final ratingInfo = await _client.collection('course_ratings').getList(
+            filter: 'user_id = "$userId" && course_id = "$courseId"',
+          );
+
+      print("I: got through rater");
+      return ratingInfo.items.first.data['rating'];
+    } catch (e) {
+      print('failed on rater');
+      return 0;
+    }
+  }
+
+  static Future<double> getCourseRating(String courseId) async {
+    try {
+      final ratingList = await _client
+          .collection('course_ratings')
+          .getList(filter: 'course_id = "$courseId"');
+
+      double rating = 0;
+
+      ratingList.items.fold(
+        rating,
+        (previousValue, element) => rating += element.data['rating'],
+      );
+
+      rating /= ratingList.items.length;
+
+      return rating;
+    } catch (e) {
+      return 0;
     }
   }
 
@@ -149,6 +219,8 @@ class PocketClient {
               .firstWhere((element) => element.id == topic.data['topic']);
           curCourse.addTopic(curTopic);
         }
+
+        curCourse.rating = await getCourseRating(curCourse.id);
 
         existingCourses.add(curCourse.id);
         courses.add(curCourse);
@@ -183,12 +255,13 @@ class PocketClient {
         course.addTopic(curTopic);
       }
 
+      course.rating = await getCourseRating(course.id);
+
       return course;
     } catch (e) {
       return Course();
     }
   }
-
 
   static Future<ViewStatus> getSavedPosition(
     String userId,
@@ -211,10 +284,8 @@ class PocketClient {
       if (status.data["current_episode"] != epNumber) {
         return ViewStatus(status.data["current_episode"], Duration.zero);
       }
-      print("got here bro");
       return ViewStatus(epNumber, parseDuration(status.data["position"]));
     } catch (e) {
-      print("failed");
       return const ViewStatus(-1, Duration.zero);
     }
   }
@@ -255,7 +326,6 @@ class PocketClient {
       }
     } catch (e) {}
   }
-
 
   static Future<bool> createCourse(
     Course newCourse,

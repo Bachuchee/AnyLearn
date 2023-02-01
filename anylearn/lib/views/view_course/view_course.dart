@@ -11,10 +11,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../models/episode.dart';
+import '../shared/course_rating.dart';
 
 final currentCourseProivder = StateProvider<Course>((ref) => Course());
 
@@ -32,6 +34,8 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
 
   List<Episode> _episodeList = [];
 
+  double _myRating = 0;
+  double _courseRating = 0;
 
   ViewStatus? _status;
 
@@ -42,6 +46,7 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
           await PocketClient.getCourseById(widget.courseId);
     }
     getStatus();
+    await getRatings();
   }
 
   Future<void> getStatus() async {
@@ -53,6 +58,15 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
     );
   }
 
+  Future<void> getRatings() async {
+    final course = ref.read(currentCourseProivder);
+    _myRating = await PocketClient.getUserRating(
+      PocketClient.model.id,
+      course.id,
+    );
+    liveRating(course.id);
+  }
+
   Future<void> getEpisodes() async {
     final course = ref.read(currentCourseProivder);
     PocketClient.getCourseEpisodes(course).then(
@@ -62,6 +76,24 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
         },
       ),
     );
+  }
+
+  Future<void> updateRatings(double rating, String courseId) async {
+    PocketClient.updateCourseRating(
+      PocketClient.model.id,
+      courseId,
+      rating,
+    );
+  }
+
+  Future<void> liveRating(courseId) async {
+    while (true) {
+      double newRating = await PocketClient.getCourseRating(courseId);
+      setState(() {
+        _courseRating = newRating;
+      });
+      await Future.delayed(const Duration(milliseconds: 500));
+    }
   }
 
   @override
@@ -110,6 +142,21 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
               color: secondaryColor,
             ),
           ),
+        ),
+        trailing: RatingBar.builder(
+          allowHalfRating: true,
+          initialRating: _myRating,
+          minRating: 0,
+          itemCount: 5,
+          direction: Axis.horizontal,
+          itemPadding: const EdgeInsets.all(4.0),
+          itemBuilder: (context, _) => const Icon(
+            Icons.star,
+            color: Colors.amber,
+          ),
+          onRatingUpdate: (rating) {
+            updateRatings(rating, course.id);
+          },
         ),
       ),
       ListTile(
@@ -284,6 +331,11 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
                           ),
                         ),
                       ),
+                      if (course.rating > 0)
+                        Align(
+                          alignment: Alignment.bottomRight,
+                          child: CourseRating(_courseRating),
+                        ),
                     ],
                   ),
                 );

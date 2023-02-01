@@ -70,6 +70,7 @@ class _OngoingCoursesState extends ConsumerState<OngoingCourses> {
           onClick: () {
             viewCourse(index);
           },
+          courseRating: _courses[index].rating,
           courseChips: _courses[index].topics,
           courseId: _courses[index].id,
         ),

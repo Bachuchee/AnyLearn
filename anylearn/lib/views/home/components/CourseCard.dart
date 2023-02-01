@@ -2,6 +2,7 @@ import 'package:anylearn/Theme/colors.dart';
 import 'package:flutter/material.dart';
 
 import '../../../models/topic.dart';
+import '../../shared/course_rating.dart';
 
 const courseTagTemplate = "CourseImage_";
 const profileTagTemplate = "ProfileImage_";
@@ -15,6 +16,7 @@ class CourseCard extends StatefulWidget {
     this.courseImage,
     this.userImage,
     this.courseTitle,
+    this.courseRating = 0,
     this.courseId = "",
     required this.onClick,
     required this.courseChips,
@@ -26,6 +28,7 @@ class CourseCard extends StatefulWidget {
   final String? username;
   final String? courseTitle;
   final String courseId;
+  final double courseRating;
   final List<Topic> courseChips;
 
   @override
@@ -66,21 +69,31 @@ class _CourseCardState extends State<CourseCard> {
               children: [
                 Expanded(
                   flex: 14,
-                  child: Hero(
-                    tag: courseTagTemplate + widget.courseId,
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.vertical(
-                          top: Radius.circular(12.0),
+                  child: Stack(
+                    children: [
+                      Hero(
+                        tag: courseTagTemplate + widget.courseId,
+                        child: Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(12.0),
+                            ),
+                            color: Colors.grey,
+                            image: widget.courseImage != null
+                                ? DecorationImage(
+                                    image: widget.courseImage!,
+                                    fit: BoxFit.cover)
+                                : null,
+                          ),
                         ),
-                        color: Colors.grey,
-                        image: widget.courseImage != null
-                            ? DecorationImage(
-                                image: widget.courseImage!, fit: BoxFit.cover)
-                            : null,
                       ),
-                    ),
+                      if (widget.courseRating > 0)
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: CourseRating(widget.courseRating),
+                        ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 8.0),
