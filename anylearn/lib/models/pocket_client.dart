@@ -144,6 +144,8 @@ class PocketClient {
           curCourse.addTopic(curTopic);
         }
 
+        curCourse.rating = await getCourseRating(curCourse.id);
+
         existingCourses.add(curCourse.id);
         courses.add(curCourse);
       }
@@ -164,6 +166,27 @@ class PocketClient {
       return ratingInfo.items.first.data['rating'];
     } catch (e) {
       print('failed on rater');
+      return 0;
+    }
+  }
+
+  static Future<double> getCourseRating(String courseId) async {
+    try {
+      final ratingList = await _client
+          .collection('course_ratings')
+          .getList(filter: 'course_id = "$courseId"');
+
+      double rating = 0;
+
+      ratingList.items.fold(
+        rating,
+        (previousValue, element) => rating += element.data['rating'],
+      );
+
+      rating /= ratingList.items.length;
+
+      return rating;
+    } catch (e) {
       return 0;
     }
   }
@@ -197,6 +220,8 @@ class PocketClient {
           curCourse.addTopic(curTopic);
         }
 
+        curCourse.rating = await getCourseRating(curCourse.id);
+
         existingCourses.add(curCourse.id);
         courses.add(curCourse);
       }
@@ -229,6 +254,8 @@ class PocketClient {
             .firstWhere((element) => element.id == topic.data['topic']);
         course.addTopic(curTopic);
       }
+
+      course.rating = await getCourseRating(course.id);
 
       return course;
     } catch (e) {
