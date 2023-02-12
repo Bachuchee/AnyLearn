@@ -11,6 +11,7 @@ import 'package:anylearn/views/ongoing_courses/ongoing_courses.dart';
 import 'package:anylearn/views/shared/PageScaffold/page_scaffold.dart';
 import 'package:anylearn/views/signup/signup.dart';
 import 'package:anylearn/views/user_courses/user_courses.dart';
+import 'package:anylearn/views/user_profile/edit_profile.dart';
 import 'package:anylearn/views/view_course/view_course.dart';
 import 'package:anylearn/views/view_episode/view_episode.dart';
 import 'package:flutter/material.dart';
@@ -55,6 +56,11 @@ class MyApp extends StatelessWidget {
           content: OngoingCourses(),
           appbarExtension: HomeFilters(),
         ),
+      ),
+      GoRoute(
+        path: '/edit-profile',
+        name: 'EditProfile',
+        builder: (context, state) => const EditProfile(),
       ),
       GoRoute(
         path: '/new-course',

@@ -1,6 +1,5 @@
 // ignore_for_file: use_build_context_synchronously
 
-
 import 'package:anylearn/Theme/colors.dart';
 import 'package:anylearn/controllers/auth_service.dart';
 import 'package:anylearn/controllers/file_service.dart';
@@ -93,7 +92,7 @@ class _SignupPageState extends State<SignupPage> {
           .collection('users')
           .authWithPassword(_emailController.text, _passwordController.text);
       if (await AuthService.updateProfile(
-          _usernameController.text, _imageData, _topics)) {
+          _usernameController.text, "", _imageData, _topics)) {
         context.go("/");
       }
     } catch (e) {

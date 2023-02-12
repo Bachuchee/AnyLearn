@@ -273,6 +273,9 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
                           PocketClient.model, PocketClient.model.data['avatar'])
                       .toString(),
                 ),
+                onClick: () {
+                  context.goNamed('EditProfile');
+                },
               ),
             ],
             expandedHeight: 500.0,

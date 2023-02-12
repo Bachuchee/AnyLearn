@@ -1,5 +1,6 @@
 import 'package:anylearn/views/shared/profile-avatar.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../Theme/colors.dart';
 
@@ -43,7 +44,12 @@ class _MainAppBarState extends State<MainAppBar> {
             ),
           ),
         ),
-        ProfileAvatar(userImage: widget.userImage),
+        ProfileAvatar(
+          userImage: widget.userImage,
+          onClick: () {
+            context.goNamed('EditProfile');
+          },
+        ),
       ],
       bottom: widget.appbarExtension,
     );
