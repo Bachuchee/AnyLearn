@@ -47,7 +47,12 @@ class _EditProfileState extends ConsumerState<EditProfile> {
       _imageData,
       _topics,
     )) {
-      context.goNamed("Home");
+      context.goNamed(
+        'UserProfile',
+        params: {
+          'userId': PocketClient.model.id,
+        },
+      );
     }
   }
 
@@ -110,7 +115,12 @@ class _EditProfileState extends ConsumerState<EditProfile> {
             color: secondaryColor,
           ),
           onPressed: () {
-            context.goNamed('Home');
+            context.goNamed(
+              'UserProfile',
+              params: {
+                'userId': PocketClient.model.id,
+              },
+            );
           },
         ),
         title: const Text(

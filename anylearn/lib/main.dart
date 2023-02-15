@@ -12,6 +12,7 @@ import 'package:anylearn/views/shared/PageScaffold/page_scaffold.dart';
 import 'package:anylearn/views/signup/signup.dart';
 import 'package:anylearn/views/user_courses/user_courses.dart';
 import 'package:anylearn/views/user_profile/edit_profile.dart';
+import 'package:anylearn/views/user_profile/user_profile.dart';
 import 'package:anylearn/views/view_course/view_course.dart';
 import 'package:anylearn/views/view_episode/view_episode.dart';
 import 'package:flutter/material.dart';
@@ -58,6 +59,13 @@ class MyApp extends StatelessWidget {
         ),
       ),
       GoRoute(
+        path: '/users/:userId',
+        name: 'UserProfile',
+        builder: (context, state) => UserProfile(
+          state.params['userId']!,
+        ),
+      ),
+      GoRoute(
         path: '/edit-profile',
         name: 'EditProfile',
         builder: (context, state) => const EditProfile(),
@@ -75,8 +83,9 @@ class MyApp extends StatelessWidget {
       GoRoute(
         path: '/courses/:courseId',
         name: 'ViewCourse',
-        builder: (context, state) =>
-            ViewCourse(courseId: state.params['courseId']!),
+        builder: (context, state) => ViewCourse(
+          courseId: state.params['courseId']!,
+        ),
       ),
       GoRoute(
         path: '/episodes/:episodeId',

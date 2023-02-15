@@ -87,4 +87,18 @@ class AuthService {
       return false;
     }
   }
+
+  static Future<bool> logout() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+
+      _client.authStore.clear();
+
+      prefs.clear();
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
 }

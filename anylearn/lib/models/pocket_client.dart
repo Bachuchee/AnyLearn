@@ -64,7 +64,6 @@ class PocketClient {
           ),
         );
       }
-      print("I: gotter here!");
       return topics;
     } catch (e) {
       print('I: failed');

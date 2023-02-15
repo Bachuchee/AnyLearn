@@ -1,3 +1,4 @@
+import 'package:anylearn/models/pocket_client.dart';
 import 'package:anylearn/views/shared/profile-avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -47,7 +48,8 @@ class _MainAppBarState extends State<MainAppBar> {
         ProfileAvatar(
           userImage: widget.userImage,
           onClick: () {
-            context.goNamed('EditProfile');
+            context.goNamed('UserProfile',
+                params: {'userId': PocketClient.model.id});
           },
         ),
       ],
