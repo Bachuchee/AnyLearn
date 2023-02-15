@@ -2,6 +2,7 @@ import 'dart:html';
 
 import 'package:anylearn/controllers/duration_service.dart';
 import 'package:anylearn/models/episode.dart';
+import 'package:anylearn/models/follow.dart';
 import 'package:anylearn/models/topic.dart';
 import 'package:anylearn/models/user.dart';
 import 'package:anylearn/models/view_status.dart';
@@ -435,6 +436,49 @@ class PocketClient {
     } catch (e) {
       return [];
     }
+  }
+
+  static Future<bool> checkFollowing(String follower, String followee) async {
+    try {
+      final follows = await _client.collection('follows').getList(
+            filter: 'follower_id = "$follower" && followed_id = "$followee"',
+          );
+
+      final followData = follows.items.first.data;
+
+      return followData['follower_id'] == follower &&
+          followData['followed_id'] == followee;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  static Future<void> follow(String follower, String followee) async {
+    try {
+      if (!await checkFollowing(follower, followee)) {
+        final body = {
+          'follower_id': follower,
+          'followed_id': followee,
+        };
+
+        await _client.collection('follows').create(body: body);
+      }
+    } catch (e) {}
+  }
+
+  static Future<void> unFollow(String follower, String followee) async {
+    try {
+      final follows = await _client.collection('follows').getList(
+            filter: 'follower_id = "$follower" && followed_id = "$followee"',
+          );
+
+      final followData = follows.items.first;
+
+      if (followData.data['follower_id'] == follower &&
+          followData.data['followed_id'] == followee) {
+        _client.collection('follows').delete(followData.id);
+      }
+    } catch (e) {}
   }
 
   static RecordModel get model {

@@ -1,4 +1,5 @@
 import 'package:anylearn/controllers/auth_service.dart';
+import 'package:anylearn/views/user_profile/follow_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -167,6 +168,16 @@ class _UserProfileState extends ConsumerState<UserProfile> {
               ),
             ),
           ),
+          if (user.id != PocketClient.model.id)
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: FollowButton(
+                  PocketClient.model.id,
+                  user.id,
+                ),
+              ),
+            ),
           Center(
             child: Padding(
               padding: const EdgeInsets.all(4.0),
