@@ -28,6 +28,8 @@ class UserProfile extends ConsumerStatefulWidget {
 class _UserProfileState extends ConsumerState<UserProfile> {
   final _client = PocketClient.client;
   List<Course> _userCourses = [];
+  int _followerCount = 0;
+  int _followingCount = 0;
 
   Future<void> getUser() async {
     ref.read(curUserProvider.notifier).state = await PocketClient.getUser(
@@ -53,11 +55,24 @@ class _UserProfileState extends ConsumerState<UserProfile> {
     );
   }
 
+  Future<void> getLiveFollowings() async {
+    while (true) {
+      int followers = await PocketClient.getFollowers(widget.userId);
+      int following = await PocketClient.getFollowing(widget.userId);
+      setState(() {
+        _followerCount = followers;
+        _followingCount = following;
+      });
+      await Future.delayed(const Duration(milliseconds: 500));
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     getUser();
     getCourses();
+    getLiveFollowings();
   }
 
   @override
@@ -182,7 +197,7 @@ class _UserProfileState extends ConsumerState<UserProfile> {
             child: Padding(
               padding: const EdgeInsets.all(4.0),
               child: Text(
-                "Followers: 0 Following: 0",
+                "Followers: $_followerCount Following: $_followingCount",
                 style: TextStyle(
                   color: Colors.black.withOpacity(0.5),
                 ),
