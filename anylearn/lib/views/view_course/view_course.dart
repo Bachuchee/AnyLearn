@@ -123,12 +123,22 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
         leading: Hero(
           tag: profileTagTemplate + course.id,
           child: ProfileAvatar(
-            userImage: NetworkImage(_client
-                .getFileUrl(
-                  course.user!.model!,
-                  course.user!.avatarName,
-                )
-                .toString()),
+            userImage: NetworkImage(
+              _client
+                  .getFileUrl(
+                    course.user!.model!,
+                    course.user!.avatarName,
+                  )
+                  .toString(),
+            ),
+            onClick: () {
+              context.goNamed(
+                'UserProfile',
+                params: {
+                  'userId': course.user!.id,
+                },
+              );
+            },
           ),
         ),
         title: const Text("By"),
@@ -273,6 +283,9 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
                           PocketClient.model, PocketClient.model.data['avatar'])
                       .toString(),
                 ),
+                onClick: () {
+                  context.goNamed('EditProfile');
+                },
               ),
             ],
             expandedHeight: 500.0,

@@ -1,4 +1,3 @@
-
 import 'dart:typed_data';
 
 import 'package:anylearn/models/pocket_client.dart';
@@ -37,27 +36,65 @@ class AuthService {
 
   static Future<bool> updateProfile(
     String username,
-    Uint8List imageData,
+    String about,
+    Uint8List? imageData,
     List<String> topics,
   ) async {
     try {
-      final imageFile = MultipartFile.fromBytes(
-        'avatar',
-        imageData,
-        filename: 'avatar.png',
-      );
+      MultipartFile? imageFile;
+
+      if (imageData != null) {
+        imageFile = MultipartFile.fromBytes(
+          'avatar',
+          imageData,
+          filename: 'avatar.png',
+        );
+      }
 
       final body = {
         "username": username,
-        "about": " ",
-        "user_topics": topics,
+        "about": about,
         "is_admin": false,
         "is_banned": false,
       };
 
-      await _client
-          .collection('users')
-          .update(PocketClient.model.id, body: body, files: [imageFile]);
+      await _client.collection('users').update(
+            PocketClient.model.id,
+            body: body,
+            files: imageFile != null ? [imageFile] : [],
+          );
+
+      final curTopics = await _client
+          .collection('user_topics')
+          .getList(filter: 'user_id = "${PocketClient.model.id}"');
+
+      for (var curTopic in curTopics.items) {
+        if (!topics.contains(curTopic.id)) {
+          await _client.collection('user_topics').delete(curTopic.id);
+        }
+      }
+
+      for (var topic in topics) {
+        if (!curTopics.items.fold(false,
+            (previousValue, element) => topic == element.id ? true : false)) {
+          final body = {'user_id': PocketClient.model.id, 'topic_id': topic};
+          await _client.collection('user_topics').create(body: body);
+        }
+      }
+
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  static Future<bool> logout() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+
+      _client.authStore.clear();
+
+      prefs.clear();
 
       return true;
     } catch (e) {

@@ -41,7 +41,34 @@ class PocketClient {
 
   static Future<User> getUser(String id) async {
     final userRecord = await _client.collection('users').getOne(id);
-    return User.fromJson(userRecord.data, userRecord);
+    final user = User.fromJson(userRecord.data, userRecord);
+    print("I: going to get topics");
+    user.topics = await getUserTopics(user.id);
+    return user;
+  }
+
+  static Future<List<Topic>> getUserTopics(String id) async {
+    try {
+      final topics = <Topic>[];
+      final topicToUser = await _client
+          .collection('user_topics')
+          .getList(filter: 'user_id = "$id"');
+      for (var record in topicToUser.items) {
+        final topic =
+            await _client.collection('topics').getOne(record.data['topic_id']);
+        topics.add(
+          Topic(
+            topic.data['name'],
+            topic.data['description'],
+            topic.id,
+          ),
+        );
+      }
+      return topics;
+    } catch (e) {
+      print('I: failed');
+      return [];
+    }
   }
 
   static Future<Episode> getEpisode(String id) async {
@@ -162,10 +189,8 @@ class PocketClient {
             filter: 'user_id = "$userId" && course_id = "$courseId"',
           );
 
-      print("I: got through rater");
       return ratingInfo.items.first.data['rating'];
     } catch (e) {
-      print('failed on rater');
       return 0;
     }
   }

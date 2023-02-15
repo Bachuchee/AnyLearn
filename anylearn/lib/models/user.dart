@@ -1,13 +1,21 @@
+import 'package:anylearn/models/topic.dart';
 import 'package:pocketbase/pocketbase.dart';
 
 class User {
-  User(this.id, this.username, this.about, this.avatarName, this.model);
+  User({
+    this.id = "",
+    this.username = "",
+    this.about = "",
+    this.avatarName = "",
+    this.model,
+  });
 
-  final String id;
-  final String username;
-  final String about;
-  final String avatarName;
-  final RecordModel? model;
+  String id;
+  String username;
+  String about;
+  String avatarName;
+  List<Topic> topics = [];
+  RecordModel? model;
 
   User.fromJson(Map<String, dynamic> json, this.model)
       : id = model!.id,

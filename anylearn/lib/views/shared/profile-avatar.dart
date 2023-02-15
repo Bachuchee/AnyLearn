@@ -4,9 +4,13 @@ class ProfileAvatar extends StatefulWidget {
   const ProfileAvatar({
     Key? key,
     this.userImage,
+    this.size = 40.0,
+    this.onClick,
   }) : super(key: key);
 
   final ImageProvider? userImage;
+  final double size;
+  final void Function()? onClick;
 
   @override
   State<ProfileAvatar> createState() => _ProfileAvatarState();
@@ -28,12 +32,12 @@ class _ProfileAvatarState extends State<ProfileAvatar> {
             Radius.circular(100.0),
           ),
         ),
-        onTap: () {},
+        onTap: widget.onClick,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Container(
-            height: 40.0,
-            width: 40.0,
+            height: widget.size,
+            width: widget.size,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: const Color(0x00000000),
