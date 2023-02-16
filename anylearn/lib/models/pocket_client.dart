@@ -507,6 +507,24 @@ class PocketClient {
     }
   }
 
+  static Future<List<User>> getFollowerUsers(String userId) async {
+    try {
+      final userList = <User>[];
+      final followList = await _client.collection('follows').getList(
+            perPage: 100000000,
+            filter: 'follower_id = "$userId"',
+          );
+
+      for (var follow in followList.items) {
+        final curUser = await getUser(follow.data['followed_id']);
+        userList.add(curUser);
+      }
+      return userList;
+    } catch (e) {
+      return [];
+    }
+  }
+
   static RecordModel get model {
     return _client.authStore.model as RecordModel;
   }

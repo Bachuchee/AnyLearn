@@ -39,7 +39,9 @@ class _MenuPageState extends ConsumerState<MenuPage>
     (BuildContext context) {
       context.go('/ongoing-courses');
     },
-    (BuildContext context) {},
+    (BuildContext context) {
+      context.goNamed('Following');
+    },
   ];
 
   @override
