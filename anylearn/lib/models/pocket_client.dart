@@ -577,7 +577,7 @@ class PocketClient {
 
       final notificationRecords = await _client
           .collection('notifications')
-          .getList(filter: 'receiver_id = "$userId"');
+          .getList(filter: 'receiver_id = "$userId"', sort: "-created");
 
       for (var notification in notificationRecords.items) {
         final course = await getCourseById(notification.data['course_id']);
