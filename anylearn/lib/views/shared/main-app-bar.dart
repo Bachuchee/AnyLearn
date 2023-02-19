@@ -10,12 +10,16 @@ class MainAppBar extends StatefulWidget implements PreferredSizeWidget {
     super.key,
     this.userImage,
     this.appbarExtension,
+    this.onClickNotification,
+    required this.showWindow,
   }) : preferredSize = Size.fromHeight(
           (appbarExtension == null ? kToolbarHeight : kToolbarHeight + 50.0),
         );
 
   final ImageProvider? userImage;
   final PreferredSizeWidget? appbarExtension;
+  final void Function()? onClickNotification;
+  final bool showWindow;
 
   @override
   final Size preferredSize;
@@ -25,6 +29,28 @@ class MainAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _MainAppBarState extends State<MainAppBar> {
+  bool _newNotifications = false;
+
+  Future<void> checkForNewNotifications() async {
+    while (true) {
+      Future.delayed(const Duration(milliseconds: 500));
+
+      final status =
+          await PocketClient.checkUnreadNotifications(PocketClient.model.id);
+
+      setState(() {
+        _newNotifications = status;
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    checkForNewNotifications();
+  }
+
   @override
   Widget build(BuildContext context) {
     return AppBar(
@@ -38,9 +64,15 @@ class _MainAppBarState extends State<MainAppBar> {
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: IconButton(
-            onPressed: () {},
-            icon: const Icon(
-              Icons.notifications_none,
+            onPressed: widget.onClickNotification,
+            icon: Icon(
+              _newNotifications
+                  ? widget.showWindow
+                      ? Icons.notifications_active
+                      : Icons.notifications_active_outlined
+                  : widget.showWindow
+                      ? Icons.notifications_rounded
+                      : Icons.notifications_none,
               color: secondaryColor,
             ),
           ),

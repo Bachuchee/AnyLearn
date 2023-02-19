@@ -112,16 +112,6 @@ class _UserProfileState extends ConsumerState<UserProfile> {
           style: const TextStyle(color: secondaryColor),
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.notifications_none,
-                color: secondaryColor,
-              ),
-            ),
-          ),
           if (isUser)
             Padding(
               padding: const EdgeInsets.all(8.0),

@@ -3,6 +3,7 @@ import 'dart:html';
 import 'package:anylearn/controllers/duration_service.dart';
 import 'package:anylearn/models/episode.dart';
 import 'package:anylearn/models/follow.dart';
+import 'package:anylearn/models/notification.dart';
 import 'package:anylearn/models/topic.dart';
 import 'package:anylearn/models/user.dart';
 import 'package:anylearn/models/view_status.dart';
@@ -377,9 +378,30 @@ class PocketClient {
         await _client.collection('course_topics').create(body: body);
       }
 
+      notifyNewCourse(courseRecord);
+
       return true;
     } catch (e) {
       return false;
+    }
+  }
+
+  static Future<void> notifyNewCourse(RecordModel courseRecord) async {
+    final followerList = await _client.collection('follows').getList(
+          perPage: 100000000,
+          filter: 'followed_id = "${courseRecord.data['user_id']}"',
+        );
+
+    for (var follower in followerList.items) {
+      final body = {
+        "sender_id": courseRecord.data['user_id'],
+        "receiver_id": follower.data['follower_id'],
+        "course_id": courseRecord.id,
+        "episode_update": false,
+        "was_read": false,
+      };
+
+      await _client.collection('notifications').create(body: body);
     }
   }
 
@@ -408,9 +430,31 @@ class PocketClient {
         files: [image, video],
       );
 
+      notifyNewEpisode(episodeRecord);
+
       return true;
     } catch (e) {
       return false;
+    }
+  }
+
+  static Future<void> notifyNewEpisode(RecordModel episodeRecord) async {
+    final watchers = await _client
+        .collection('course_status')
+        .getList(filter: 'course_id = "${episodeRecord.data['course_id']}"');
+
+    for (var watcher in watchers.items) {
+      final body = {
+        'sender_id': model.id,
+        'receiver_id': watcher.data['user_id'],
+        'course_id': episodeRecord.data['course_id'],
+        'episode_update': true,
+        'was_read': false,
+      };
+
+      if (watcher.data['user_id'] != model.id) {
+        await _client.collection('notifications').create(body: body);
+      }
     }
   }
 
@@ -522,6 +566,60 @@ class PocketClient {
       return userList;
     } catch (e) {
       return [];
+    }
+  }
+
+  static Future<List<AppNotification>> getUserNotifications(
+    String userId,
+  ) async {
+    try {
+      final notificationList = <AppNotification>[];
+
+      final notificationRecords = await _client
+          .collection('notifications')
+          .getList(filter: 'receiver_id = "$userId"', sort: "-created");
+
+      for (var notification in notificationRecords.items) {
+        final course = await getCourseById(notification.data['course_id']);
+
+        final user = await getUser(notification.data['sender_id']);
+
+        final message =
+            'user ${user.username} just ${notification.data['episode_update'] ? 'added a new episode to the course - "${course.title}"!' : 'created a new course - "${course.title}!"'}';
+
+        notificationList.add(
+          AppNotification(
+            notification.id,
+            course,
+            user,
+            message,
+            notification.data['was_read'],
+          ),
+        );
+      }
+      return notificationList;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  static Future<void> markNotificationRead(String notificationId) async {
+    final body = {'was_read': true};
+
+    await _client
+        .collection('notifications')
+        .update(notificationId, body: body);
+  }
+
+  static Future<bool> checkUnreadNotifications(String userId) async {
+    try {
+      final notificationRecords = await _client
+          .collection('notifications')
+          .getList(filter: 'receiver_id = "$userId" && was_read = false');
+
+      return notificationRecords.items.isNotEmpty;
+    } catch (e) {
+      return false;
     }
   }
 
