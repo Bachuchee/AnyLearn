@@ -1,19 +1,21 @@
+import 'package:anylearn/views/menu/menu.dart';
 import 'package:anylearn/views/user_follows/UserCard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../models/pocket_client.dart';
 import '../../models/user.dart';
 
-class UserFollows extends StatefulWidget {
+class UserFollows extends ConsumerStatefulWidget {
   const UserFollows({super.key});
 
   @override
-  State<UserFollows> createState() => _UserFollowsState();
+  ConsumerState<UserFollows> createState() => _UserFollowsState();
 }
 
-class _UserFollowsState extends State<UserFollows> {
+class _UserFollowsState extends ConsumerState<UserFollows> {
   List<User> users = [];
 
   @override

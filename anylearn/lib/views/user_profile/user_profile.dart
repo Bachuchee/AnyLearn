@@ -79,6 +79,8 @@ class _UserProfileState extends ConsumerState<UserProfile> {
   Widget build(BuildContext context) {
     final user = ref.watch(curUserProvider);
 
+    final destinationIndex = ref.watch(indexProvider);
+
     final isUser = PocketClient.model.id == user.id;
     final List<Widget> topicChips = [];
 
@@ -92,7 +94,6 @@ class _UserProfileState extends ConsumerState<UserProfile> {
         ),
       );
     }
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -102,7 +103,6 @@ class _UserProfileState extends ConsumerState<UserProfile> {
             color: secondaryColor,
           ),
           onPressed: () {
-            final destinationIndex = ref.watch(indexProvider);
             String destination = destinations[destinationIndex];
             context.goNamed(destination);
           },
@@ -189,7 +189,7 @@ class _UserProfileState extends ConsumerState<UserProfile> {
                 padding: const EdgeInsets.all(8.0),
                 child: FollowButton(
                   PocketClient.model.id,
-                  user.id,
+                  widget.userId,
                 ),
               ),
             ),

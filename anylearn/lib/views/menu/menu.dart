@@ -8,9 +8,8 @@ final indexProvider = StateProvider<int>((ref) => 0);
 const destinations = [
   "Home",
   "UserCourses",
-  // TODO: update destinations once they are added
   "OngoingCourses",
-  "Home",
+  "Following",
 ];
 
 class MenuPage extends ConsumerStatefulWidget {
