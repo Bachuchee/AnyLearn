@@ -377,9 +377,30 @@ class PocketClient {
         await _client.collection('course_topics').create(body: body);
       }
 
+      notifyNewCourse(courseRecord);
+
       return true;
     } catch (e) {
       return false;
+    }
+  }
+
+  static Future<void> notifyNewCourse(RecordModel courseRecord) async {
+    final followerList = await _client.collection('follows').getList(
+          perPage: 100000000,
+          filter: 'followed_id = "${courseRecord.data['user_id']}"',
+        );
+
+    for (var follower in followerList.items) {
+      final body = {
+        "sender_id": courseRecord.data['user_id'],
+        "receiver_id": follower.data['follower_id'],
+        "course_id": courseRecord.id,
+        "episode_update": false,
+        "was_read": false,
+      };
+
+      await _client.collection('notifications').create(body: body);
     }
   }
 
@@ -408,9 +429,31 @@ class PocketClient {
         files: [image, video],
       );
 
+      notifyNewEpisode(episodeRecord);
+
       return true;
     } catch (e) {
       return false;
+    }
+  }
+
+  static Future<void> notifyNewEpisode(RecordModel episodeRecord) async {
+    final watchers = await _client
+        .collection('course_status')
+        .getList(filter: 'course_id = "${episodeRecord.data['course_id']}"');
+
+    for (var watcher in watchers.items) {
+      final body = {
+        'sender_id': model.id,
+        'receiver_id': watcher.data['user_id'],
+        'course_id': episodeRecord.data['course_id'],
+        'episode_update': true,
+        'was_read': false,
+      };
+
+      if (watcher.data['user_id'] != model.id) {
+        await _client.collection('notifications').create(body: body);
+      }
     }
   }
 
