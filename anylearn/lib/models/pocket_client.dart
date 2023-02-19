@@ -2,6 +2,7 @@ import 'dart:html';
 
 import 'package:anylearn/controllers/duration_service.dart';
 import 'package:anylearn/models/episode.dart';
+import 'package:anylearn/models/follow.dart';
 import 'package:anylearn/models/topic.dart';
 import 'package:anylearn/models/user.dart';
 import 'package:anylearn/models/view_status.dart';
@@ -432,6 +433,93 @@ class PocketClient {
         episodeList.add(newEpisode);
       }
       return episodeList;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  static Future<bool> checkFollowing(String follower, String followee) async {
+    try {
+      final follows = await _client.collection('follows').getList(
+            filter: 'follower_id = "$follower" && followed_id = "$followee"',
+          );
+
+      final followData = follows.items.first.data;
+
+      return followData['follower_id'] == follower &&
+          followData['followed_id'] == followee;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  static Future<void> follow(String follower, String followee) async {
+    try {
+      if (!await checkFollowing(follower, followee)) {
+        final body = {
+          'follower_id': follower,
+          'followed_id': followee,
+        };
+
+        await _client.collection('follows').create(body: body);
+      }
+    } catch (e) {}
+  }
+
+  static Future<void> unFollow(String follower, String followee) async {
+    try {
+      final follows = await _client.collection('follows').getList(
+            filter: 'follower_id = "$follower" && followed_id = "$followee"',
+          );
+
+      final followData = follows.items.first;
+
+      if (followData.data['follower_id'] == follower &&
+          followData.data['followed_id'] == followee) {
+        _client.collection('follows').delete(followData.id);
+      }
+    } catch (e) {}
+  }
+
+  static Future<int> getFollowers(String userId) async {
+    try {
+      final followList = await _client.collection('follows').getList(
+            perPage: 100000000,
+            filter: 'followed_id = "$userId"',
+          );
+
+      return followList.items.length;
+    } catch (e) {
+      return 0;
+    }
+  }
+
+  static Future<int> getFollowing(String userId) async {
+    try {
+      final followList = await _client.collection('follows').getList(
+            perPage: 100000000,
+            filter: 'follower_id = "$userId"',
+          );
+
+      return followList.items.length;
+    } catch (e) {
+      return 0;
+    }
+  }
+
+  static Future<List<User>> getFollowerUsers(String userId) async {
+    try {
+      final userList = <User>[];
+      final followList = await _client.collection('follows').getList(
+            perPage: 100000000,
+            filter: 'follower_id = "$userId"',
+          );
+
+      for (var follow in followList.items) {
+        final curUser = await getUser(follow.data['followed_id']);
+        userList.add(curUser);
+      }
+      return userList;
     } catch (e) {
       return [];
     }

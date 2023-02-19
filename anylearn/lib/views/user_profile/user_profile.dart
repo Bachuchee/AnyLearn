@@ -1,4 +1,5 @@
 import 'package:anylearn/controllers/auth_service.dart';
+import 'package:anylearn/views/user_profile/follow_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -27,6 +28,8 @@ class UserProfile extends ConsumerStatefulWidget {
 class _UserProfileState extends ConsumerState<UserProfile> {
   final _client = PocketClient.client;
   List<Course> _userCourses = [];
+  int _followerCount = 0;
+  int _followingCount = 0;
 
   Future<void> getUser() async {
     ref.read(curUserProvider.notifier).state = await PocketClient.getUser(
@@ -52,16 +55,31 @@ class _UserProfileState extends ConsumerState<UserProfile> {
     );
   }
 
+  Future<void> getLiveFollowings() async {
+    while (true) {
+      int followers = await PocketClient.getFollowers(widget.userId);
+      int following = await PocketClient.getFollowing(widget.userId);
+      setState(() {
+        _followerCount = followers;
+        _followingCount = following;
+      });
+      await Future.delayed(const Duration(milliseconds: 500));
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     getUser();
     getCourses();
+    getLiveFollowings();
   }
 
   @override
   Widget build(BuildContext context) {
     final user = ref.watch(curUserProvider);
+
+    final destinationIndex = ref.watch(indexProvider);
 
     final isUser = PocketClient.model.id == user.id;
     final List<Widget> topicChips = [];
@@ -76,7 +94,6 @@ class _UserProfileState extends ConsumerState<UserProfile> {
         ),
       );
     }
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -86,7 +103,6 @@ class _UserProfileState extends ConsumerState<UserProfile> {
             color: secondaryColor,
           ),
           onPressed: () {
-            final destinationIndex = ref.watch(indexProvider);
             String destination = destinations[destinationIndex];
             context.goNamed(destination);
           },
@@ -167,11 +183,21 @@ class _UserProfileState extends ConsumerState<UserProfile> {
               ),
             ),
           ),
+          if (user.id != PocketClient.model.id)
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: FollowButton(
+                  PocketClient.model.id,
+                  widget.userId,
+                ),
+              ),
+            ),
           Center(
             child: Padding(
               padding: const EdgeInsets.all(4.0),
               child: Text(
-                "Followers: 0 Following: 0",
+                "Followers: $_followerCount Following: $_followingCount",
                 style: TextStyle(
                   color: Colors.black.withOpacity(0.5),
                 ),

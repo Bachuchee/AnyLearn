@@ -44,7 +44,7 @@ class _UserCoursesState extends ConsumerState<UserCourses> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return ListView(
       children: [
         Padding(
           padding: const EdgeInsets.all(8.0),

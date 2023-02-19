@@ -11,6 +11,7 @@ import 'package:anylearn/views/ongoing_courses/ongoing_courses.dart';
 import 'package:anylearn/views/shared/PageScaffold/page_scaffold.dart';
 import 'package:anylearn/views/signup/signup.dart';
 import 'package:anylearn/views/user_courses/user_courses.dart';
+import 'package:anylearn/views/user_follows/user_follows.dart';
 import 'package:anylearn/views/user_profile/edit_profile.dart';
 import 'package:anylearn/views/user_profile/user_profile.dart';
 import 'package:anylearn/views/view_course/view_course.dart';
@@ -56,6 +57,13 @@ class MyApp extends StatelessWidget {
         builder: (context, state) => const PageScaffold(
           content: OngoingCourses(),
           appbarExtension: HomeFilters(),
+        ),
+      ),
+      GoRoute(
+        path: '/following',
+        name: 'Following',
+        builder: (context, state) => const PageScaffold(
+          content: UserFollows(),
         ),
       ),
       GoRoute(

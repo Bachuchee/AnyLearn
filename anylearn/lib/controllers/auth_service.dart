@@ -88,13 +88,18 @@ class AuthService {
     }
   }
 
+  static Future<void> clearAuth() async {
+    await Future.delayed(const Duration(milliseconds: 500));
+    _client.authStore.clear();
+  }
+
   static Future<bool> logout() async {
     try {
       final prefs = await SharedPreferences.getInstance();
 
-      _client.authStore.clear();
-
       prefs.clear();
+
+      clearAuth();
 
       return true;
     } catch (e) {
