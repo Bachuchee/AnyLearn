@@ -109,6 +109,12 @@ class _ViewEpisodeState extends ConsumerState<ViewEpisode> {
                       PocketClient.model, PocketClient.model.data['avatar'])
                   .toString(),
             ),
+            onClick: () {
+              context.goNamed(
+                'UserProfile',
+                params: {'userId': PocketClient.model.id},
+              );
+            },
           ),
         ],
       ),

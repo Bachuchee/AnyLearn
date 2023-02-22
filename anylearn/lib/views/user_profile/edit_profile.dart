@@ -229,7 +229,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
           Expanded(
             child: GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 8,
+                crossAxisCount: 6,
                 mainAxisSpacing: 1.0,
                 crossAxisSpacing: 1.0,
                 childAspectRatio: 1.0,
@@ -283,7 +283,12 @@ class _EditProfileState extends ConsumerState<EditProfile> {
                       vertical: 18.0,
                     ),
                   ),
-                  child: const Text("Submit"),
+                  child: const Text(
+                    "Submit",
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
                 ),
               ),
             ),

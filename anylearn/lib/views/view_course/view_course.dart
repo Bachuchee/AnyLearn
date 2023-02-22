@@ -284,7 +284,10 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
                       .toString(),
                 ),
                 onClick: () {
-                  context.goNamed('EditProfile');
+                  context.goNamed(
+                    'UserProfile',
+                    params: {'userId': PocketClient.model.id},
+                  );
                 },
               ),
             ],

@@ -135,7 +135,12 @@ class _LoginSectionState extends State<LoginSection> {
                       ),
                     ),
                     padding: const EdgeInsets.all(18.0)),
-                child: const Text("Login"),
+                child: const Text(
+                  "Login",
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
               ),
               const SizedBox(width: 8.0),
               Text(

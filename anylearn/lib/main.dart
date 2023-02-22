@@ -1,3 +1,4 @@
+import 'package:anylearn/Theme/colors.dart';
 import 'package:anylearn/controllers/auth_service.dart';
 
 import 'package:anylearn/utils/specialscroll.dart';
@@ -133,7 +134,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       scrollBehavior: ChipListScroll(),
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        colorScheme: scheme,
+        useMaterial3: true,
       ),
       routerConfig: _router,
     );

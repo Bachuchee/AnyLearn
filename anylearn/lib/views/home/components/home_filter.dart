@@ -1,3 +1,4 @@
+import 'package:anylearn/Theme/colors.dart';
 import 'package:anylearn/models/pocket_client.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -60,6 +61,10 @@ class _HomeFiltersState extends ConsumerState<HomeFilters> {
           child: FilterChip(
             label: Text(
               _topicList[index].name,
+            ),
+            avatar: const Icon(
+              Icons.circle,
+              color: secondaryColor,
             ),
             onSelected: (isSelected) {
               updateFilter(isSelected, _topicList[index]);

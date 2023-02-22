@@ -80,8 +80,10 @@ class _MainAppBarState extends State<MainAppBar> {
         ProfileAvatar(
           userImage: widget.userImage,
           onClick: () {
-            context.goNamed('UserProfile',
-                params: {'userId': PocketClient.model.id});
+            context.goNamed(
+              'UserProfile',
+              params: {'userId': PocketClient.model.id},
+            );
           },
         ),
       ],

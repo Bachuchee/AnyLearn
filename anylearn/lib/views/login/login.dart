@@ -16,12 +16,77 @@ class _LoginPageState extends State<LoginPage> {
       appBar: AppBar(
         title: const Image(
           image: AssetImage('assets/images/Logo.png'),
-
           width: 200.0,
           height: 200.0,
+          color: Colors.white,
         ),
-        backgroundColor: Colors.white,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextButton(
+              onPressed: () {
+                showAboutDialog(
+                  context: context,
+                  applicationName: 'AnyLearn',
+                  applicationVersion: 'ver. 1.0',
+                  applicationLegalese:
+                      'Copyright @ Gal Aloni, ${DateTime.now().year}',
+                  applicationIcon: SizedBox(
+                    width: 100.0,
+                    height: 100.0,
+                    child: Image.asset('assets/images/AnyLearnHat.png'),
+                  ),
+                );
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
+              ),
+              child: const Text(
+                'About',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24.0,
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextButton(
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text("Contact Us!"),
+                    content: const Text(
+                      "You can cotact us by mail using this refrence email: support@anylearn.com (School Project no real email or contacting ;)",
+                    ),
+                    actions: [
+                      TextButton(
+                        child: const Text("Ok"),
+                        onPressed: () => Navigator.of(context).pop(),
+                      )
+                    ],
+                  ),
+                );
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
+              ),
+              child: const Text(
+                'Contact us',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24.0,
+                ),
+              ),
+            ),
+          ),
+        ],
+        backgroundColor: const Color(0x00000000),
+        elevation: 0.0,
       ),
+      extendBodyBehindAppBar: true,
       body: (() {
         if (MediaQuery.of(context).size.width > 1200.0) {
           return Row(

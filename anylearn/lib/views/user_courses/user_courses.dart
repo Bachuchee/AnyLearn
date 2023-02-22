@@ -56,8 +56,16 @@ class _UserCoursesState extends ConsumerState<UserCourses> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: const [
-                Icon(Icons.add),
-                Text("Add New"),
+                Icon(
+                  Icons.add,
+                  color: Colors.white,
+                ),
+                Text(
+                  "Add New",
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
               ],
             ),
           ),
