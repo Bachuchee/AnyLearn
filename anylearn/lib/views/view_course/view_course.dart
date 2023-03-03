@@ -246,6 +246,53 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
       ));
     }
 
+    if (isCreator) {
+      widgetList.add(
+        Center(
+          child: SizedBox(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                ),
+                onPressed: () => showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text("Delete Course?"),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          _client.collection('courses').delete(course.id);
+
+                          final destinationIndex = ref.watch(indexProvider);
+                          String destination = destinations[destinationIndex];
+                          context.goNamed(destination);
+                        },
+                        child: const Text(
+                          "Yes",
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: const Text("No"),
+                      ),
+                    ],
+                  ),
+                ),
+                child: const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text("Delete"),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(
