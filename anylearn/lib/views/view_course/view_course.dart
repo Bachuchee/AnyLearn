@@ -54,7 +54,7 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
     _status = await PocketClient.getSavedPosition(
       PocketClient.model.id,
       course.id,
-      -1,
+      "",
     );
   }
 
@@ -179,7 +179,7 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
         indent: 16.0,
         endIndent: 16.0,
       ),
-      if (_status != null && _status!.episodeNumber > 0)
+      if (_status != null && _status!.epId != "")
         const ListTile(
           title: Text(
             "Continue watching:",
@@ -189,22 +189,34 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
             ),
           ),
         ),
-      if (_status != null && _status!.episodeNumber > 0)
+      if (_status != null && _status!.epId != "")
         EpisodeTile(
-          _episodeList[_status!.episodeNumber - 1],
+          _episodeList
+              .where((element) => element.episodeModel!.id == _status!.epId)
+              .first,
           onClick: () {
-            viewEpisode(_episodeList[_status!.episodeNumber - 1]);
+            viewEpisode(_episodeList
+                .where((element) => element.episodeModel!.id == _status!.epId)
+                .first);
           },
           image: NetworkImage(
             _client
                 .getFileUrl(
-                  _episodeList[_status!.episodeNumber - 1].episodeModel!,
-                  _episodeList[_status!.episodeNumber - 1].thumbnailName,
+                  _episodeList
+                      .where((element) =>
+                          element.episodeModel!.id == _status!.epId)
+                      .first
+                      .episodeModel!,
+                  _episodeList
+                      .where((element) =>
+                          element.episodeModel!.id == _status!.epId)
+                      .first
+                      .thumbnailName,
                 )
                 .toString(),
           ),
         ),
-      if (_status != null && _status!.episodeNumber > 0)
+      if (_status != null && _status!.epId != "")
         const Divider(
           height: 1.0,
           thickness: 1.0,

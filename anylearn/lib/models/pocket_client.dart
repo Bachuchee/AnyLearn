@@ -293,7 +293,7 @@ class PocketClient {
   static Future<ViewStatus> getSavedPosition(
     String userId,
     String courseId,
-    int epNumber,
+    String epId,
   ) async {
     try {
       final statusList = await _client.collection("course_status").getList(
@@ -308,12 +308,12 @@ class PocketClient {
       }
       final status = statusList.items[0];
 
-      if (status.data["current_episode"] != epNumber) {
+      if (status.data["current_episode"] != epId) {
         return ViewStatus(status.data["current_episode"], Duration.zero);
       }
-      return ViewStatus(epNumber, parseDuration(status.data["position"]));
+      return ViewStatus(epId, parseDuration(status.data["position"]));
     } catch (e) {
-      return const ViewStatus(-1, Duration.zero);
+      return const ViewStatus("", Duration.zero);
     }
   }
 
@@ -321,7 +321,7 @@ class PocketClient {
     String courseId,
     String userId,
     Duration pos,
-    int epNumber,
+    String epId,
     bool hasBeenCreated,
   ) async {
     try {
@@ -338,13 +338,13 @@ class PocketClient {
         final body = {
           "user_id": userId,
           "course_id": courseId,
-          "current_episode": epNumber,
+          "current_episode": epId,
           "position": pos.toString(),
         };
         await _client.collection("course_status").create(body: body);
       } else {
         final body = {
-          "current_episode": epNumber,
+          "current_episode": epId,
           "position": pos.toString(),
         };
         await _client
@@ -462,7 +462,7 @@ class PocketClient {
     try {
       final episodeModels = await _client.collection("episodes").getList(
             filter: 'course_id = "${course.id}"',
-            sort: '+episode_number',
+            sort: '+created',
           );
 
       final List<Episode> episodeList = [];

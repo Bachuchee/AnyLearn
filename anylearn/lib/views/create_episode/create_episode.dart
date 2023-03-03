@@ -71,10 +71,6 @@ class _CreateEpisodeState extends ConsumerState<CreateEpisode> {
 
   void createEpisode() async {
     final newEpisode = ref.watch(newEpisodeProvider);
-    final course = ref.watch(currentCourseProivder);
-    final episodeList = await PocketClient.getCourseEpisodes(course);
-    final episodeNumber = episodeList.length + 1;
-    newEpisode.episodeNumber = episodeNumber;
     if (await PocketClient.createEpisode(
       newEpisode,
       _imageData!,
@@ -137,208 +133,215 @@ class _CreateEpisodeState extends ConsumerState<CreateEpisode> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text(
-                "Create a new episode:",
-                style: TextStyle(
-                  color: secondaryColor,
-                  fontSize: 40.0,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  "Create a new episode:",
+                  style: TextStyle(
+                    color: secondaryColor,
+                    fontSize: 40.0,
+                  ),
                 ),
               ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Column(
-                  children: [
-                    Container(
-                      width: 300.0,
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextField(
-                        maxLength: 50,
-                        cursorColor: secondaryColor,
-                        decoration: const InputDecoration(
-                          filled: true,
-                          labelText: "title",
-                          labelStyle: TextStyle(color: secondaryColor),
-                          focusColor: secondaryColor,
-                          fillColor: Colors.white,
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              width: 1.0,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              width: 3.0,
-                              color: secondaryColor,
-                            ),
-                          ),
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            ref.read(newEpisodeProvider.notifier).state.title =
-                                value;
-                          });
-                        },
-                      ),
-                    ),
-                    Container(
-                      width: 300.0,
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextField(
-                        keyboardType: TextInputType.multiline,
-                        maxLines: 5,
-                        maxLength: 120,
-                        cursorColor: secondaryColor,
-                        decoration: const InputDecoration(
-                          filled: true,
-                          labelText: "description",
-                          labelStyle: TextStyle(color: secondaryColor),
-                          focusColor: secondaryColor,
-                          fillColor: Colors.white,
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              width: 1.0,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              width: 3.0,
-                              color: secondaryColor,
-                            ),
-                          ),
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            ref
-                                .read(newEpisodeProvider.notifier)
-                                .state
-                                .description = value;
-                          });
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  width: 260.0,
-                  height: 260.0,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey,
-                    ),
-                    onPressed: () {
-                      setEpisodeImage();
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        Icon(
-                          Icons.upload,
-                          size: 50.0,
-                        ),
-                        Text(
-                          "Upload Image",
-                          style: TextStyle(
-                            fontSize: 30.0,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 300.0,
-                  child: VerticalDivider(
-                    width: 1.0,
-                    thickness: 1.0,
-                  ),
-                ),
-                Column(
-                  children: [
-                    SizedBox(
-                      width: 260.0,
-                      height: 260.0,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.grey,
-                        ),
-                        onPressed: () {
-                          setEpisodeVideo();
-                        },
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Icon(
-                              Icons.upload,
-                              size: 50.0,
-                            ),
-                            Text(
-                              "Upload Video",
-                              style: TextStyle(
-                                fontSize: 30.0,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Column(
+                    children: [
+                      Container(
+                        width: 300.0,
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextField(
+                          maxLength: 50,
+                          cursorColor: secondaryColor,
+                          decoration: const InputDecoration(
+                            filled: true,
+                            labelText: "title",
+                            labelStyle: TextStyle(color: secondaryColor),
+                            focusColor: secondaryColor,
+                            fillColor: Colors.white,
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                width: 1.0,
                               ),
                             ),
-                          ],
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                width: 3.0,
+                                color: secondaryColor,
+                              ),
+                            ),
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              ref
+                                  .read(newEpisodeProvider.notifier)
+                                  .state
+                                  .title = value;
+                            });
+                          },
                         ),
                       ),
-                    ),
-                    Text(
-                      "Status: ${_videoData != null ? "uploaded" : "waiting"}",
-                      style: TextStyle(
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.bold,
-                        color: _videoData != null ? Colors.green : Colors.red,
+                      Container(
+                        width: 300.0,
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextField(
+                          keyboardType: TextInputType.multiline,
+                          maxLines: 5,
+                          maxLength: 120,
+                          cursorColor: secondaryColor,
+                          decoration: const InputDecoration(
+                            filled: true,
+                            labelText: "description",
+                            labelStyle: TextStyle(color: secondaryColor),
+                            focusColor: secondaryColor,
+                            fillColor: Colors.white,
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                width: 1.0,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                width: 3.0,
+                                color: secondaryColor,
+                              ),
+                            ),
+                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              ref
+                                  .read(newEpisodeProvider.notifier)
+                                  .state
+                                  .description = value;
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    width: 260.0,
+                    height: 260.0,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey,
+                        foregroundColor: Colors.white,
+                      ),
+                      onPressed: () {
+                        setEpisodeImage();
+                      },
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Icon(
+                            Icons.upload,
+                            size: 50.0,
+                          ),
+                          Text(
+                            "Upload Image",
+                            style: TextStyle(
+                              fontSize: 30.0,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
-              ],
-            ),
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text(
-                "Preview:",
-                style: TextStyle(
-                  color: secondaryColor,
-                  fontSize: 24.0,
-                ),
-              ),
-            ),
-            Container(
-              color: Colors.grey,
-              child: EpisodeTile(
-                newEpisodeData,
-                image: _imageData != null ? MemoryImage(_imageData!) : null,
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: secondaryColor,
-                  minimumSize: const Size(100.0, 50.0),
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(20.0),
+                  ),
+                  const SizedBox(
+                    height: 300.0,
+                    child: VerticalDivider(
+                      width: 1.0,
+                      thickness: 1.0,
                     ),
                   ),
-                ),
-                onPressed: canSubmit()
-                    ? () {
-                        createEpisode();
-                      }
-                    : null,
-                child: const Text('Submit'),
+                  Column(
+                    children: [
+                      SizedBox(
+                        width: 260.0,
+                        height: 260.0,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.grey,
+                            foregroundColor: Colors.white,
+                          ),
+                          onPressed: () {
+                            setEpisodeVideo();
+                          },
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Icon(
+                                Icons.upload,
+                                size: 50.0,
+                              ),
+                              Text(
+                                "Upload Video",
+                                style: TextStyle(
+                                  fontSize: 30.0,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Text(
+                        "Status: ${_videoData != null ? "uploaded" : "waiting"}",
+                        style: TextStyle(
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.bold,
+                          color: _videoData != null ? Colors.green : Colors.red,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-            )
-          ],
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  "Preview:",
+                  style: TextStyle(
+                    color: secondaryColor,
+                    fontSize: 24.0,
+                  ),
+                ),
+              ),
+              Container(
+                color: Colors.grey,
+                child: EpisodeTile(
+                  newEpisodeData,
+                  image: _imageData != null ? MemoryImage(_imageData!) : null,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: secondaryColor,
+                    foregroundColor: Colors.white,
+                    minimumSize: const Size(100.0, 50.0),
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(20.0),
+                      ),
+                    ),
+                  ),
+                  onPressed: canSubmit()
+                      ? () {
+                          createEpisode();
+                        }
+                      : null,
+                  child: const Text('Submit'),
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

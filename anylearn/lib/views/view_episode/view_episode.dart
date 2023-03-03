@@ -39,7 +39,7 @@ class _ViewEpisodeState extends ConsumerState<ViewEpisode> {
     final status = await PocketClient.getSavedPosition(
       PocketClient.model.id,
       episode.course!.id,
-      episode.episodeNumber,
+      episode.episodeModel!.id,
     );
 
     _startPosition = status.position;
@@ -56,7 +56,7 @@ class _ViewEpisodeState extends ConsumerState<ViewEpisode> {
           episode.course!.id,
           PocketClient.model.id,
           _podController.videoPlayerValue!.position,
-          episode.episodeNumber,
+          episode.episodeModel!.id,
           _created,
         );
         if (!_created) {
@@ -153,13 +153,6 @@ class _ViewEpisodeState extends ConsumerState<ViewEpisode> {
           ),
           ListTile(
             title: Text(
-              "Chapter #${episode.episodeNumber}",
-              style: TextStyle(
-                color: Colors.black.withOpacity(0.6),
-                fontSize: 14.0,
-              ),
-            ),
-            subtitle: Text(
               episode.title,
               style: const TextStyle(
                 color: Colors.black,
