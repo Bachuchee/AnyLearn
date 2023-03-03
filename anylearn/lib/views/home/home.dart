@@ -4,6 +4,7 @@ import 'package:anylearn/views/view_course/view_course.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../models/course.dart';
+import '../../models/topic.dart';
 import 'components/CourseCard.dart';
 import 'package:go_router/go_router.dart';
 
@@ -17,6 +18,7 @@ class HomePage extends ConsumerStatefulWidget {
 class _HomePageState extends ConsumerState<HomePage> {
   final _client = PocketClient.client;
   List<Course> _courses = [];
+  Topic? _prevTopic = Topic("", "", "");
 
   @override
   void initState() {
@@ -35,9 +37,18 @@ class _HomePageState extends ConsumerState<HomePage> {
   Widget build(BuildContext context) {
     final topicFilter = ref.watch(filterProvider);
 
-    PocketClient.getCourses(topicFilter).then(
-      (value) => setState(() => _courses = value),
-    );
+    if (_prevTopic != topicFilter) {
+      if (topicFilter == null || topicFilter.name != "For You") {
+        PocketClient.getCourses(topicFilter).then(
+          (value) => setState(() => _courses = value),
+        );
+      } else {
+        PocketClient.getPersonalizedCourses(PocketClient.model.id).then(
+          (value) => setState(() => _courses = value),
+        );
+      }
+      _prevTopic = topicFilter;
+    }
 
     return Container(
       padding: const EdgeInsets.all(8.0),

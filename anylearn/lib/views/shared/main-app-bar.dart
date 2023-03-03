@@ -54,7 +54,6 @@ class _MainAppBarState extends State<MainAppBar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.white,
       title: Image.asset(
         'assets/images/Logo.png',
         height: 200.0,

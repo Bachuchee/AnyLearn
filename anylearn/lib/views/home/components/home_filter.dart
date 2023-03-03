@@ -23,7 +23,7 @@ class HomeFilters extends ConsumerStatefulWidget with PreferredSizeWidget {
 }
 
 class _HomeFiltersState extends ConsumerState<HomeFilters> {
-  List<Topic> _topicList = [];
+  final List<Topic> _topicList = [const Topic("For You", "", "")];
 
   @override
   void initState() {
@@ -31,7 +31,7 @@ class _HomeFiltersState extends ConsumerState<HomeFilters> {
     PocketClient.getTopics().then(
       (value) => setState(
         () {
-          _topicList = value;
+          _topicList.addAll(value);
         },
       ),
     );
@@ -58,20 +58,34 @@ class _HomeFiltersState extends ConsumerState<HomeFilters> {
         itemCount: _topicList.length,
         itemBuilder: (context, index) => Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: FilterChip(
-            label: Text(
-              _topicList[index].name,
-            ),
-            avatar: const Icon(
-              Icons.circle,
-              color: secondaryColor,
-            ),
-            onSelected: (isSelected) {
-              updateFilter(isSelected, _topicList[index]);
-            },
-            selected:
-                curFilter != null && curFilter.name == _topicList[index].name,
-          ),
+          child: index != 0
+              ? FilterChip(
+                  label: Text(
+                    _topicList[index].name,
+                  ),
+                  avatar: const Icon(
+                    Icons.circle,
+                    color: secondaryColor,
+                  ),
+                  onSelected: (isSelected) {
+                    updateFilter(isSelected, _topicList[index]);
+                  },
+                  selected: curFilter != null &&
+                      curFilter.name == _topicList[index].name,
+                )
+              : FilterChip(
+                  label: Text(_topicList[index].name),
+                  showCheckmark: false,
+                  avatar: const Icon(
+                    Icons.interests,
+                    color: secondaryColor,
+                  ),
+                  onSelected: (isSelected) {
+                    updateFilter(isSelected, _topicList[index]);
+                  },
+                  selected: curFilter != null &&
+                      curFilter.name == _topicList[index].name,
+                ),
         ),
       ),
     );

@@ -482,6 +482,19 @@ class PocketClient {
     }
   }
 
+  static Future<List<Course>> getPersonalizedCourses(String userId) async {
+    try {
+      final List<Course> courses = [];
+      final userTopics = await getUserTopics(userId);
+      for (var topic in userTopics) {
+        courses.addAll(await getCourses(topic));
+      }
+      return courses;
+    } catch (e) {
+      return [];
+    }
+  }
+
   static Future<bool> checkFollowing(String follower, String followee) async {
     try {
       final follows = await _client.collection('follows').getList(
