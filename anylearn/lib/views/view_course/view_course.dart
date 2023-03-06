@@ -116,7 +116,8 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
   @override
   Widget build(BuildContext context) {
     final course = ref.watch(currentCourseProivder);
-    final isCreator = (PocketClient.model.id == course.user!.id);
+    final isCreator =
+        (PocketClient.model.id == course.user!.id) || PocketClient.isAdmin;
 
     List<Widget> widgetList = [
       ListTile(

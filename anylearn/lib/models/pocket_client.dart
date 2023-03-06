@@ -399,6 +399,7 @@ class PocketClient {
         "course_id": courseRecord.id,
         "episode_update": false,
         "was_read": false,
+        "admin_deletion": false,
       };
 
       await _client.collection('notifications').create(body: body);
@@ -450,6 +451,7 @@ class PocketClient {
         'course_id': episodeRecord.data['course_id'],
         'episode_update': true,
         'was_read': false,
+        "admin_deletion": false,
       };
 
       if (watcher.data['user_id'] != model.id) {
@@ -636,7 +638,7 @@ class PocketClient {
     }
   }
 
-  static RecordModel get model {
-    return _client.authStore.model as RecordModel;
-  }
+  static RecordModel get model => _client.authStore.model as RecordModel;
+
+  static bool get isAdmin => model.data['is_admin'] ?? false;
 }
