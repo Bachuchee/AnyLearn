@@ -1,5 +1,5 @@
 class ViewStatus {
-  const ViewStatus(this.epId, this.position);
-  final String epId;
+  ViewStatus(this.epId, this.position);
+  String epId;
   final Duration position;
 }

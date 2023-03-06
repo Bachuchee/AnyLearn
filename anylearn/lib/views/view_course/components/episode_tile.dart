@@ -7,11 +7,20 @@ import 'package:flutter/src/widgets/framework.dart';
 import '../../../models/episode.dart';
 
 class EpisodeTile extends StatefulWidget {
-  const EpisodeTile(this.episode, {super.key, this.onClick, this.image});
+  const EpisodeTile(
+    this.episode, {
+    super.key,
+    this.onClick,
+    this.onDelete,
+    this.image,
+    this.isCreator = false,
+  });
 
   final Episode episode;
   final void Function()? onClick;
+  final void Function()? onDelete;
   final ImageProvider<Object>? image;
+  final bool isCreator;
 
   @override
   State<EpisodeTile> createState() => _EpisodeTileState();
@@ -19,6 +28,7 @@ class EpisodeTile extends StatefulWidget {
 
 class _EpisodeTileState extends State<EpisodeTile> {
   final _client = PocketClient.client;
+  bool _isHovering = false;
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +37,9 @@ class _EpisodeTileState extends State<EpisodeTile> {
       child: Material(
         child: InkWell(
           onTap: widget.onClick,
+          onHover: (value) {
+            setState(() => _isHovering = value);
+          },
           mouseCursor: MaterialStateMouseCursor.clickable,
           child: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -47,6 +60,15 @@ class _EpisodeTileState extends State<EpisodeTile> {
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
               ),
+              trailing: widget.isCreator && _isHovering
+                  ? IconButton(
+                      icon: const Icon(
+                        Icons.delete,
+                        color: Colors.red,
+                      ),
+                      onPressed: widget.onDelete,
+                    )
+                  : null,
             ),
           ),
         ),

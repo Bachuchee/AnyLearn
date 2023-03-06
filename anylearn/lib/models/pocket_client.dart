@@ -313,7 +313,7 @@ class PocketClient {
       }
       return ViewStatus(epId, parseDuration(status.data["position"]));
     } catch (e) {
-      return const ViewStatus("", Duration.zero);
+      return ViewStatus("", Duration.zero);
     }
   }
 

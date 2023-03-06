@@ -255,6 +255,16 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
               .getFileUrl(episode.episodeModel!, episode.thumbnailName)
               .toString(),
         ),
+        onDelete: () {
+          _client.collection('episodes').delete(episode.episodeModel!.id);
+          setState(() {
+            if (_status != null) {
+              _status!.epId = "";
+            }
+            _episodeList.remove(episode);
+          });
+        },
+        isCreator: isCreator,
       ));
     }
 
