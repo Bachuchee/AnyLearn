@@ -2,13 +2,14 @@ import 'package:anylearn/Theme/colors.dart';
 import 'package:anylearn/controllers/auth_service.dart';
 
 import 'package:anylearn/utils/specialscroll.dart';
+import 'package:anylearn/views/ban_page/ban_page.dart';
 import 'package:anylearn/views/create_course/create_course.dart';
 import 'package:anylearn/views/create_episode/create_episode.dart';
 import 'package:anylearn/views/home/components/home_filter.dart';
 import 'package:anylearn/views/home/home.dart';
 import 'package:anylearn/views/login/login.dart';
 import 'package:anylearn/views/ongoing_courses/ongoing_courses.dart';
-
+import 'package:anylearn/models/pocket_client.dart';
 import 'package:anylearn/views/shared/PageScaffold/page_scaffold.dart';
 import 'package:anylearn/views/signup/signup.dart';
 import 'package:anylearn/views/user_courses/user_courses.dart';
@@ -112,13 +113,23 @@ class MyApp extends StatelessWidget {
         path: '/signup',
         name: 'Signup',
         builder: (context, state) => const SignupPage(),
-      )
+      ),
+      GoRoute(
+        path: '/banned',
+        name: 'Banned',
+        builder: (context, state) => const BanPage(),
+      ),
     ],
     redirect: (context, state) async {
       final bool isLoggingIn =
           state.subloc == "/login" || state.subloc == '/signup';
 
+      final bool inBanScreen = state.subloc == "/banned";
+
       if (await AuthService.checkAuth()) {
+        if (PocketClient.isBanned) {
+          return inBanScreen || isLoggingIn ? null : "/banned";
+        }
         return null;
       } else {
         return isLoggingIn ? null : '/login';
@@ -126,7 +137,6 @@ class MyApp extends StatelessWidget {
     },
   );
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(

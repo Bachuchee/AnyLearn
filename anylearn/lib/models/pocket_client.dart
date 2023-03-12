@@ -87,6 +87,9 @@ class PocketClient {
           .getList(filter: 'user_id = "${model.id}"');
       for (var courseModel in courseList.items) {
         final curCourse = await getCourseById(courseModel.data['course_id']);
+        if (curCourse.title == "") {
+          continue;
+        }
         final topicNames = <String>[];
         for (var element in curCourse.topics) {
           topicNames.add(element.name);
@@ -159,6 +162,10 @@ class PocketClient {
         final userModel = await _client
             .collection('users')
             .getOne(courseRecord.data['user_id']);
+
+        if (userModel.data['is_banned'] ?? false) {
+          continue;
+        }
 
         final curCourse =
             Course.fromJson(courseRecord.data, courseRecord, userModel);
@@ -268,6 +275,10 @@ class PocketClient {
       final userModel = await _client
           .collection('users')
           .getOne(courseRecord.data['user_id']);
+
+      if (userModel.data['is_banned'] ?? false) {
+        return Course();
+      }
 
       final course =
           Course.fromJson(courseRecord.data, courseRecord, userModel);
@@ -576,6 +587,9 @@ class PocketClient {
 
       for (var follow in followList.items) {
         final curUser = await getUser(follow.data['followed_id']);
+        if (curUser.model!.data['is_banned'] ?? false) {
+          continue;
+        }
         userList.add(curUser);
       }
       return userList;
@@ -641,4 +655,6 @@ class PocketClient {
   static RecordModel get model => _client.authStore.model as RecordModel;
 
   static bool get isAdmin => model.data['is_admin'] ?? false;
+
+  static bool get isBanned => model.data['is_banned'] ?? false;
 }

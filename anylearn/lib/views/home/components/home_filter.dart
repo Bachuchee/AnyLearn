@@ -8,7 +8,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../models/topic.dart';
 
-final filterProvider = StateProvider<Topic?>((ref) => null);
+final filterProvider = StateProvider<Topic?>(
+  (ref) => const Topic(
+    "For You",
+    "",
+    "",
+  ),
+);
 
 class HomeFilters extends ConsumerStatefulWidget with PreferredSizeWidget {
   const HomeFilters({super.key});

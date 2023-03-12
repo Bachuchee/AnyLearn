@@ -112,6 +112,19 @@ class _UserProfileState extends ConsumerState<UserProfile> {
           style: const TextStyle(color: secondaryColor),
         ),
         actions: [
+          if (PocketClient.isAdmin)
+            IconButton(
+              onPressed: () {
+                _client
+                    .collection('users')
+                    .update(user.id, body: {'is_banned': true});
+                context.goNamed('Home');
+              },
+              icon: const Icon(
+                Icons.dangerous,
+                color: Colors.red,
+              ),
+            ),
           if (isUser)
             Padding(
               padding: const EdgeInsets.all(8.0),
