@@ -112,17 +112,27 @@ class _UserProfileState extends ConsumerState<UserProfile> {
           style: const TextStyle(color: secondaryColor),
         ),
         actions: [
-          if (PocketClient.isAdmin)
-            IconButton(
-              onPressed: () {
-                _client
-                    .collection('users')
-                    .update(user.id, body: {'is_banned': true});
-                context.goNamed('Home');
-              },
-              icon: const Icon(
-                Icons.dangerous,
-                color: Colors.red,
+          if (PocketClient.isAdmin && user.model != null && !isUser)
+            Tooltip(
+              message: user.model!.data['is_banned'] ? "unban" : "ban",
+              child: IconButton(
+                onPressed: () {
+                  _client.collection('users').update(
+                    user.id,
+                    body: {
+                      'is_banned': !user.model!.data['is_banned'],
+                    },
+                  );
+                  setState(() => user.model!.data['is_banned'] =
+                      !user.model!.data['is_banned']);
+                },
+                icon: Icon(
+                  user.model!.data['is_banned']
+                      ? Icons.check_circle
+                      : Icons.cancel,
+                  color:
+                      user.model!.data['is_banned'] ? Colors.green : Colors.red,
+                ),
               ),
             ),
           if (isUser)

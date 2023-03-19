@@ -11,7 +11,7 @@ class AppNotification {
   );
 
   final String id;
-  final Course relatedCourse;
+  final Course? relatedCourse;
   final User relatedUser;
   final String message;
   final bool wasRead;

@@ -408,9 +408,8 @@ class PocketClient {
         "sender_id": courseRecord.data['user_id'],
         "receiver_id": follower.data['follower_id'],
         "course_id": courseRecord.id,
-        "episode_update": false,
+        "message": "uploaded a new course: ${courseRecord.data['title']}",
         "was_read": false,
-        "admin_deletion": false,
       };
 
       await _client.collection('notifications').create(body: body);
@@ -455,14 +454,16 @@ class PocketClient {
         .collection('course_status')
         .getList(filter: 'course_id = "${episodeRecord.data['course_id']}"');
 
+    final course = await getCourseById(episodeRecord.data['course_id']);
+
     for (var watcher in watchers.items) {
       final body = {
         'sender_id': model.id,
         'receiver_id': watcher.data['user_id'],
-        'course_id': episodeRecord.data['course_id'],
-        'episode_update': true,
+        'course_id': course.id,
         'was_read': false,
-        "admin_deletion": false,
+        'message':
+            'uploaded a new episode "${episodeRecord.data['title']}" to course "${course.title}"',
       };
 
       if (watcher.data['user_id'] != model.id) {
@@ -613,8 +614,7 @@ class PocketClient {
 
         final user = await getUser(notification.data['sender_id']);
 
-        final message =
-            'user ${user.username} just ${notification.data['episode_update'] ? 'added a new episode to the course - "${course.title}"!' : 'created a new course - "${course.title}!"'}';
+        final message = 'user ${user.username} ${notification.data['message']}';
 
         notificationList.add(
           AppNotification(

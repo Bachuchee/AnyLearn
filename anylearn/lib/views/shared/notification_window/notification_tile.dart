@@ -24,13 +24,13 @@ class _NotificationTileState extends ConsumerState<NotificationTile> {
 
   Future<void> viewCourse() async {
     ref.read(currentCourseProivder.notifier).state =
-        widget.notification.relatedCourse;
+        widget.notification.relatedCourse!;
 
     PocketClient.markNotificationRead(widget.notification.id);
 
     context.goNamed(
       "ViewCourse",
-      params: {'courseId': widget.notification.relatedCourse.id},
+      params: {'courseId': widget.notification.relatedCourse!.id},
     );
   }
 
@@ -67,7 +67,7 @@ class _NotificationTileState extends ConsumerState<NotificationTile> {
           color: secondaryColor,
         ),
       ),
-      onTap: viewCourse,
+      onTap: widget.notification.relatedCourse != null ? viewCourse : null,
     );
   }
 }
