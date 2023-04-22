@@ -58,9 +58,15 @@ class _LoginSectionState extends State<LoginSection> {
 
   @override
   Widget build(BuildContext context) {
-    return AnimateGradient(
-      primaryColors: const [secondaryColor, primaryColor, primaryColor],
-      secondaryColors: const [secondaryColor, secondaryColor, primaryColor],
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            primaryColor,
+            secondaryColor,
+          ],
+        ),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [

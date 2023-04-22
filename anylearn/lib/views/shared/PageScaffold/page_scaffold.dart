@@ -3,6 +3,7 @@ import 'package:anylearn/views/shared/notification_window/notification_window.da
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pocketbase/pocketbase.dart';
 
 import '../../../models/pocket_client.dart';
 import '../main-app-bar.dart';
@@ -24,12 +25,14 @@ class _PageScaffoldState extends ConsumerState<PageScaffold>
   bool _showWindow = false;
 
   Future<void> liveNotifications() async {
-    while (true) {
-      ref.read(notificationProvider.notifier).state =
-          await PocketClient.getUserNotifications(PocketClient.model.id);
+    try {
+      while (true) {
+        ref.read(notificationProvider.notifier).state =
+            await PocketClient.getUserNotifications(PocketClient.model.id);
 
-      Future.delayed(const Duration(milliseconds: 500));
-    }
+        Future.delayed(const Duration(milliseconds: 500));
+      }
+    } catch (e) {}
   }
 
   @override

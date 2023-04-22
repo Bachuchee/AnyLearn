@@ -2,6 +2,7 @@ import 'package:anylearn/Theme/colors.dart';
 import 'package:anylearn/controllers/auth_service.dart';
 
 import 'package:anylearn/utils/specialscroll.dart';
+import 'package:anylearn/views/admin_dashboard/admin_dashboard.dart';
 import 'package:anylearn/views/ban_page/ban_page.dart';
 import 'package:anylearn/views/create_course/create_course.dart';
 import 'package:anylearn/views/create_episode/create_episode.dart';
@@ -45,6 +46,26 @@ class MyApp extends StatelessWidget {
           content: HomePage(),
           appbarExtension: HomeFilters(),
         ),
+      ),
+      GoRoute(
+        path: '/admin',
+        name: 'Admin-Dashboard',
+        builder: (context, state) => const PageScaffold(
+          content: AdminView(),
+        ),
+        redirect: (context, state) async {
+          final bool isLoggingIn =
+              state.subloc == "/login" || state.subloc == '/signup';
+
+          if (await AuthService.checkAuth()) {
+            if (!PocketClient.isAdmin) {
+              return '/';
+            }
+            return null;
+          } else {
+            return isLoggingIn ? null : '/login';
+          }
+        },
       ),
       GoRoute(
         path: '/user-courses',

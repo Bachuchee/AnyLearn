@@ -87,13 +87,15 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
   }
 
   Future<void> liveRating(String courseId) async {
-    while (true) {
-      double newRating = await PocketClient.getCourseRating(courseId);
-      setState(() {
-        _courseRating = newRating;
-      });
-      await Future.delayed(const Duration(milliseconds: 500));
-    }
+    try {
+      while (true) {
+        double newRating = await PocketClient.getCourseRating(courseId);
+        setState(() {
+          _courseRating = newRating;
+        });
+        await Future.delayed(const Duration(milliseconds: 500));
+      }
+    } catch (e) {}
   }
 
   @override

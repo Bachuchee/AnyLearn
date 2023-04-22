@@ -32,16 +32,18 @@ class _MainAppBarState extends State<MainAppBar> {
   bool _newNotifications = false;
 
   Future<void> checkForNewNotifications() async {
-    while (true) {
-      Future.delayed(const Duration(milliseconds: 500));
+    try {
+      while (true) {
+        Future.delayed(const Duration(milliseconds: 500));
 
-      final status =
-          await PocketClient.checkUnreadNotifications(PocketClient.model.id);
+        final status =
+            await PocketClient.checkUnreadNotifications(PocketClient.model.id);
 
-      setState(() {
-        _newNotifications = status;
-      });
-    }
+        setState(() {
+          _newNotifications = status;
+        });
+      }
+    } catch (e) {}
   }
 
   @override
@@ -49,6 +51,11 @@ class _MainAppBarState extends State<MainAppBar> {
     super.initState();
 
     checkForNewNotifications();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override

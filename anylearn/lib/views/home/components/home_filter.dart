@@ -9,10 +9,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../models/topic.dart';
 
 final filterProvider = StateProvider<Topic?>(
-  (ref) => const Topic(
+  (ref) => Topic(
     "For You",
     "",
     "",
+    true,
   ),
 );
 
@@ -29,7 +30,7 @@ class HomeFilters extends ConsumerStatefulWidget with PreferredSizeWidget {
 }
 
 class _HomeFiltersState extends ConsumerState<HomeFilters> {
-  final List<Topic> _topicList = [const Topic("For You", "", "")];
+  final List<Topic> _topicList = [Topic("For You", "", "", true)];
 
   @override
   void initState() {

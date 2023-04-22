@@ -34,6 +34,7 @@ class PocketClient {
           element.data['name'],
           element.data['description'],
           element.id,
+          element.data['is_valid'],
         ),
       );
     });
@@ -63,6 +64,7 @@ class PocketClient {
             topic.data['name'],
             topic.data['description'],
             topic.id,
+            topic.data['is_valid'],
           ),
         );
       }
@@ -117,7 +119,7 @@ class PocketClient {
 
       if (userRatingModels.items.length > 1) {
         for (var item in userRatingModels.items.sublist(1)) {
-          _client.collection('course_status').delete(item.id);
+          _client.collection('course_ratings').delete(item.id);
         }
       }
 
@@ -649,6 +651,22 @@ class PocketClient {
       return notificationRecords.items.isNotEmpty;
     } catch (e) {
       return false;
+    }
+  }
+
+  static Future<List<User>> getBannedUsers() async {
+    try {
+      final userList = <User>[];
+      final userRecords =
+          await _client.collection('users').getList(filter: 'is_banned = true');
+      for (var record in userRecords.items) {
+        final user = User.fromJson(record.data, record);
+        userList.add(user);
+      }
+      return userList;
+    } catch (e) {
+      print("I: mega fail");
+      return [];
     }
   }
 

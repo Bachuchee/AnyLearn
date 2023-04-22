@@ -4,12 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../models/pocket_client.dart';
+
 final indexProvider = StateProvider<int>((ref) => 0);
 const destinations = [
   "Home",
   "UserCourses",
   "OngoingCourses",
   "Following",
+  'Admin-Dashboard',
 ];
 
 class MenuPage extends ConsumerStatefulWidget {
@@ -26,6 +29,7 @@ class _MenuPageState extends ConsumerState<MenuPage>
     'My Courses',
     'Ongoing Courses',
     'Following',
+    'Admin'
   ];
 
   final _actionList = [
@@ -40,6 +44,9 @@ class _MenuPageState extends ConsumerState<MenuPage>
     },
     (BuildContext context) {
       context.goNamed('Following');
+    },
+    (BuildContext context) {
+      context.goNamed('Admin-Dashboard');
     },
   ];
 
@@ -74,6 +81,12 @@ class _MenuPageState extends ConsumerState<MenuPage>
           selectedIcon: const Icon(Icons.person),
           label: Text(_items[3]),
         ),
+        if (PocketClient.isAdmin)
+          NavigationRailDestination(
+            icon: const Icon(Icons.admin_panel_settings_outlined),
+            selectedIcon: const Icon(Icons.admin_panel_settings),
+            label: Text(_items[4]),
+          )
       ],
       selectedIndex: index,
       minWidth: MediaQuery.of(context).size.width * 0.05,
