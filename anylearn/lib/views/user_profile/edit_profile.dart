@@ -72,7 +72,7 @@ class _EditProfileState extends ConsumerState<EditProfile> {
   }
 
   Future<void> setAvatar() async {
-    final imageData = await FileService.getImage();
+    final imageData = await AnyFileService.getImage();
     if (imageData.isNotEmpty) {
       setState(() {
         _imageData = imageData;

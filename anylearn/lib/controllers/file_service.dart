@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 
-class FileService {
+class AnyFileService {
   static Future<Uint8List> getImage() async {
     try {
       final imagePicker = ImagePicker();

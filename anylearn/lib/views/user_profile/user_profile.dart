@@ -290,6 +290,7 @@ class _UserProfileState extends ConsumerState<UserProfile> {
                 },
                 courseRating: _userCourses[index].rating,
                 courseChips: _userCourses[index].topics,
+                courseId: _userCourses[index].id,
               ),
             ),
           ),

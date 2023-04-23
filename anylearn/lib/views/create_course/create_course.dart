@@ -56,7 +56,7 @@ class _CreateCourseState extends ConsumerState<CreateCourse> {
   }
 
   Future<void> setCourseImage() async {
-    final imageData = await FileService.getImage();
+    final imageData = await AnyFileService.getImage();
     if (imageData.isNotEmpty) {
       setState(() {
         _imageData = imageData;
@@ -262,6 +262,7 @@ class _CreateCourseState extends ConsumerState<CreateCourse> {
                       courseImage:
                           _imageData != null ? MemoryImage(_imageData!) : null,
                       courseTitle: newCourseData.title,
+                      courseId: "12415",
                     ),
                   ],
                 ),

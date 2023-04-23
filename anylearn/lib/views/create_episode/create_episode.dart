@@ -52,7 +52,7 @@ class _CreateEpisodeState extends ConsumerState<CreateEpisode> {
   }
 
   Future<void> setEpisodeImage() async {
-    final imageData = await FileService.getImage();
+    final imageData = await AnyFileService.getImage();
     if (imageData.isNotEmpty) {
       setState(() {
         _imageData = imageData;
@@ -61,7 +61,7 @@ class _CreateEpisodeState extends ConsumerState<CreateEpisode> {
   }
 
   Future<void> setEpisodeVideo() async {
-    final videoData = await FileService.getVideo();
+    final videoData = await AnyFileService.getVideo();
     if (videoData.isNotEmpty) {
       setState(() {
         _videoData = videoData;

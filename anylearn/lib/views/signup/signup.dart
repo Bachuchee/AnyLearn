@@ -105,7 +105,7 @@ class _SignupPageState extends State<SignupPage> {
   }
 
   Future<void> setAvatar() async {
-    final imageData = await FileService.getImage();
+    final imageData = await AnyFileService.getImage();
     if (imageData.isNotEmpty) {
       setState(() {
         _imageData = imageData;

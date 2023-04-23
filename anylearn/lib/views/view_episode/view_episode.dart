@@ -1,4 +1,6 @@
+import 'package:anylearn/controllers/duration_service.dart';
 import 'package:anylearn/models/episode.dart';
+import 'package:anylearn/models/view_status.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -22,8 +24,6 @@ class ViewEpisode extends ConsumerStatefulWidget {
 class _ViewEpisodeState extends ConsumerState<ViewEpisode> {
   final _client = PocketClient.client;
 
-  bool _created = false;
-
   late final Future<void> _initVid;
 
   Duration _startPosition = Duration.zero;
@@ -36,48 +36,58 @@ class _ViewEpisodeState extends ConsumerState<ViewEpisode> {
 
     final episode = ref.read(episodeProvider);
 
-    final status = await PocketClient.getSavedPosition(
+    final statusId = await PocketClient.getOrCreateWatchStatus(
       PocketClient.model.id,
       episode.course!.id,
       episode.episodeModel!.id,
+      Duration.zero,
+    );
+
+    final statusModel =
+        await _client.collection('course_status').getOne(statusId);
+
+    final status = ViewStatus(
+      statusModel.data['current_episode'],
+      parseDuration(statusModel.data['position']),
     );
 
     _startPosition = status.position;
 
-    _podController = PodPlayerController(
-      playVideoFrom: PlayVideoFrom.network(
-        _client.getFileUrl(episode.episodeModel!, episode.videoName).toString(),
-      ),
-    )..initialise();
-
-    _podController.addListener(
+    setState(
       () {
-        PocketClient.updateWatchStatus(
-          episode.course!.id,
-          PocketClient.model.id,
-          _podController.videoPlayerValue!.position,
-          episode.episodeModel!.id,
-          _created,
-        );
-        if (!_created) {
-          _podController.videoSeekTo(_startPosition);
-        }
-        _created = true;
+        _podController = PodPlayerController(
+          playVideoFrom: PlayVideoFrom.network(
+            _client
+                .getFileUrl(episode.episodeModel!, episode.videoName)
+                .toString(),
+          ),
+        )
+          ..addListener(
+            () {
+              PocketClient.updateWatchStatus(
+                _podController.videoPlayerValue!.position,
+                episode.episodeModel!.id,
+                statusId,
+              );
+            },
+          )
+          ..videoSeekTo(_startPosition)
+          ..initialise();
       },
     );
   }
 
   @override
   void initState() {
-    super.initState();
-
     _initVid = setUpData();
+
+    super.initState();
   }
 
   @override
   void dispose() {
-    super.dispose();
     _podController.dispose();
+    super.dispose();
   }
 
   @override

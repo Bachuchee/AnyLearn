@@ -18,7 +18,7 @@ class CourseCard extends StatefulWidget {
     this.userImage,
     this.courseTitle,
     this.courseRating = 0,
-    this.courseId = "",
+    required this.courseId,
     required this.onClick,
     required this.courseChips,
   });

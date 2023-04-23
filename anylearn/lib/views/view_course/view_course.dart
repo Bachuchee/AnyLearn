@@ -54,7 +54,6 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
     _status = await PocketClient.getSavedPosition(
       PocketClient.model.id,
       course.id,
-      "",
     );
   }
 

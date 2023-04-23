@@ -106,6 +106,23 @@ class PocketClient {
     }
   }
 
+  static Future<ViewStatus> getSavedPosition(
+    String userId,
+    String courseId,
+  ) async {
+    try {
+      final status = await _client.collection('course_status').getList(
+            filter: 'user_id = "$userId" && course_id = "$courseId"',
+          );
+      return ViewStatus(
+        status.items[0].data['current_episode'],
+        parseDuration(status.items[0].data['position']),
+      );
+    } catch (e) {
+      return ViewStatus("", Duration.zero);
+    }
+  }
+
   static Future<void> updateCourseRating(
     String userId,
     String courseId,
@@ -303,68 +320,41 @@ class PocketClient {
     }
   }
 
-  static Future<ViewStatus> getSavedPosition(
-    String userId,
-    String courseId,
-    String epId,
-  ) async {
-    try {
-      final statusList = await _client.collection("course_status").getList(
-            filter: 'user_id = "$userId" && course_id = "$courseId"',
-            sort: "-created",
-          );
-
-      if (statusList.items.length > 1) {
-        for (var item in statusList.items.sublist(1)) {
-          _client.collection('course_status').delete(item.id);
-        }
-      }
-      final status = statusList.items[0];
-
-      if (status.data["current_episode"] != epId) {
-        return ViewStatus(status.data["current_episode"], Duration.zero);
-      }
-      return ViewStatus(epId, parseDuration(status.data["position"]));
-    } catch (e) {
-      return ViewStatus("", Duration.zero);
-    }
-  }
-
   static Future<void> updateWatchStatus(
-    String courseId,
-    String userId,
     Duration pos,
     String epId,
-    bool hasBeenCreated,
+    String statusId,
   ) async {
     try {
-      final status = await _client.collection("course_status").getList(
-          filter: 'user_id = "$userId" && course_id = "$courseId"',
-          sort: "-created");
-
-      if (status.items.length > 1) {
-        for (var item in status.items.sublist(1)) {
-          _client.collection('course_status').delete(item.id);
-        }
-      }
-      if (status.items.isEmpty || !hasBeenCreated) {
-        final body = {
-          "user_id": userId,
-          "course_id": courseId,
-          "current_episode": epId,
-          "position": pos.toString(),
-        };
-        await _client.collection("course_status").create(body: body);
-      } else {
-        final body = {
-          "current_episode": epId,
-          "position": pos.toString(),
-        };
-        await _client
-            .collection("course_status")
-            .update(status.items[0].id, body: body);
-      }
+      final body = {
+        "current_episode": epId,
+        "position": pos.toString(),
+      };
+      await _client.collection("course_status").update(statusId, body: body);
     } catch (e) {}
+  }
+
+  static Future<String> getOrCreateWatchStatus(
+    String userId,
+    String courseId,
+    String epId,
+    Duration pos,
+  ) async {
+    final status = await _client.collection("course_status").getList(
+        filter: 'user_id = "$userId" && course_id = "$courseId"',
+        sort: "-created");
+    if (status.items.isNotEmpty) {
+      return status.items[0].id;
+    }
+    final body = {
+      "user_id": userId,
+      "course_id": courseId,
+      "current_episode": epId,
+      "position": pos.toString(),
+    };
+    final newStatus =
+        await _client.collection("course_status").create(body: body);
+    return newStatus.id;
   }
 
   static Future<bool> createCourse(

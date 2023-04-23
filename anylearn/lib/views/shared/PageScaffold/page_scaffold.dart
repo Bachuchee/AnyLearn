@@ -30,7 +30,7 @@ class _PageScaffoldState extends ConsumerState<PageScaffold>
         ref.read(notificationProvider.notifier).state =
             await PocketClient.getUserNotifications(PocketClient.model.id);
 
-        Future.delayed(const Duration(milliseconds: 500));
+        Future.delayed(const Duration(seconds: 1));
       }
     } catch (e) {}
   }

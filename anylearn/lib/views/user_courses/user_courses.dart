@@ -24,13 +24,15 @@ class _UserCoursesState extends ConsumerState<UserCourses> {
   @override
   void initState() {
     super.initState();
-    PocketClient.getUserCourses(PocketClient.model.id).then(
-      (value) => setState(
-        () {
-          _userCourses = value;
-        },
-      ),
-    );
+    try {
+      PocketClient.getUserCourses(PocketClient.model.id).then(
+        (value) => setState(
+          () {
+            _userCourses = value;
+          },
+        ),
+      );
+    } catch (e) {}
   }
 
   Future<void> viewCourse(int selectedIndex) async {
@@ -103,6 +105,7 @@ class _UserCoursesState extends ConsumerState<UserCourses> {
               },
               courseRating: _userCourses[index].rating,
               courseChips: _userCourses[index].topics,
+              courseId: _userCourses[index].id,
             ),
           ),
         ),
