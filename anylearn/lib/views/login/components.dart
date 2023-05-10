@@ -61,9 +61,11 @@ class _LoginSectionState extends State<LoginSection> {
     return Container(
       decoration: const BoxDecoration(
         gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
           colors: [
-            primaryColor,
             secondaryColor,
+            primaryColor,
           ],
         ),
       ),
@@ -135,6 +137,7 @@ class _LoginSectionState extends State<LoginSection> {
                 onPressed: _signIn,
                 style: ElevatedButton.styleFrom(
                     backgroundColor: secondaryColor,
+                    foregroundColor: Colors.white,
                     shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(
                         Radius.circular(100.0),
@@ -143,9 +146,6 @@ class _LoginSectionState extends State<LoginSection> {
                     padding: const EdgeInsets.all(18.0)),
                 child: const Text(
                   "Login",
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
                 ),
               ),
               const SizedBox(width: 8.0),
@@ -168,6 +168,113 @@ class _LoginSectionState extends State<LoginSection> {
                     color: secondaryColor,
                   ),
                 ),
+              ),
+            ],
+          ),
+          TextButton(
+            style: TextButton.styleFrom(
+              foregroundColor:
+                  Theme.of(context).colorScheme.primary.withOpacity(0.5),
+            ),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => const ForgotPasswordDialog(),
+              );
+            },
+            child: const Text("Forgot password?"),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ForgotPasswordDialog extends StatefulWidget {
+  const ForgotPasswordDialog({super.key});
+
+  @override
+  State<ForgotPasswordDialog> createState() => _ForgotPasswordDialogState();
+}
+
+class _ForgotPasswordDialogState extends State<ForgotPasswordDialog> {
+  late final TextEditingController _textController;
+  bool _gotError = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _textController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    super.dispose();
+  }
+
+  Future<bool> sendForgotPassword() async {
+    try {
+      PocketClient.client
+          .collection('users')
+          .requestPasswordReset(_textController.text);
+      return false;
+    } catch (e) {
+      return true;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Text(
+              "Forgot Password",
+              style: TextStyle(fontSize: 16.0),
+            ),
+          ),
+          SizedBox(
+            width: MediaQuery.of(context).size.width * 0.15,
+            child: TextField(
+              controller: _textController,
+              decoration: InputDecoration(
+                hintText: "email",
+                border: const OutlineInputBorder(),
+                errorText:
+                    _gotError ? "Account for that email doesn't exist" : null,
+              ),
+              onChanged: (text) => setState(() {
+                _gotError = false;
+              }),
+            ),
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextButton(
+                child: const Text("Submit"),
+                onPressed: () async {
+                  final res = await sendForgotPassword();
+                  if (!res) {
+                    Navigator.pop(context);
+                  }
+                  setState(() {
+                    _gotError = res;
+                  });
+                },
+              ),
+              TextButton(
+                style: TextButton.styleFrom(
+                  foregroundColor: Theme.of(context).colorScheme.error,
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text("Cancel"),
               ),
             ],
           ),

@@ -24,7 +24,6 @@ class PocketClient {
   static Future<List<Topic>> getTopics() async {
     final topicList = await _client.collection('topics').getFullList(
           batch: 200,
-          filter: 'is_valid = True',
         );
     final List<Topic> topics = [];
     // ignore: avoid_function_literals_in_foreach_calls
@@ -34,7 +33,6 @@ class PocketClient {
           element.data['name'],
           element.data['description'],
           element.id,
-          element.data['is_valid'],
         ),
       );
     });
@@ -64,7 +62,6 @@ class PocketClient {
             topic.data['name'],
             topic.data['description'],
             topic.id,
-            topic.data['is_valid'],
           ),
         );
       }
@@ -155,6 +152,26 @@ class PocketClient {
             );
       }
     } catch (e) {}
+  }
+
+  static Future<bool> createTopic(String topicName) async {
+    try {
+      final list = await _client
+          .collection('topics')
+          .getList(filter: 'name = "$topicName"');
+      print(list.items);
+      if (list.items.isNotEmpty) {
+        return true;
+      }
+    } catch (e) {}
+    try {
+      await _client
+          .collection('topics')
+          .create(body: {'name': topicName, 'description': ' '});
+      return false;
+    } catch (e) {
+      return true;
+    }
   }
 
   static Future<List<Course>> getCourses(Topic? topicFilter) async {

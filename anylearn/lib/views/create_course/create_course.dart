@@ -104,18 +104,14 @@ class _CreateCourseState extends ConsumerState<CreateCourse> {
           width: 200.0,
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.search,
-                color: secondaryColor,
-              ),
-            ),
-          ),
           ProfileAvatar(
             userImage: userAvatar,
+            onClick: () {
+              context.goNamed(
+                'UserProfile',
+                params: {'userId': PocketClient.model.id},
+              );
+            },
           ),
         ],
       ),
@@ -214,6 +210,7 @@ class _CreateCourseState extends ConsumerState<CreateCourse> {
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.grey,
+                      foregroundColor: Colors.white,
                     ),
                     onPressed: () {
                       setCourseImage();
@@ -308,6 +305,7 @@ class _CreateCourseState extends ConsumerState<CreateCourse> {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   backgroundColor: secondaryColor,
+                  foregroundColor: Colors.white,
                   minimumSize: Size(100.0, 50.0),
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(

@@ -51,7 +51,8 @@ class _ViewEpisodeState extends ConsumerState<ViewEpisode> {
       parseDuration(statusModel.data['position']),
     );
 
-    _startPosition = status.position;
+    _startPosition =
+        status.epId == widget.episodeId ? status.position : Duration.zero;
 
     setState(
       () {

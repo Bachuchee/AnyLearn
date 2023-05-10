@@ -1,4 +1,5 @@
 import 'package:anylearn/Theme/colors.dart';
+import 'package:anylearn/views/admin_dashboard/new_topic_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
@@ -71,7 +72,12 @@ class _AdminViewState extends State<AdminView> {
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) => const NewTopicDialog(),
+                        );
+                      },
                       child: const Icon(Icons.add),
                     ),
                   );
