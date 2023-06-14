@@ -9,13 +9,13 @@ import 'package:anylearn/models/user.dart';
 import 'package:anylearn/models/view_status.dart';
 import 'package:anylearn/views/view_course/view_course.dart';
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
 import 'package:pocketbase/pocketbase.dart';
 
 import 'course.dart';
 
 class PocketClient {
-  static final _client = PocketBase('http://127.0.0.1:8090');
+  static final _client = PocketBase('http://127.0.0.1:8090/');
 
   static PocketBase get client {
     return _client;
@@ -31,7 +31,6 @@ class PocketClient {
       topics.add(
         Topic(
           element.data['name'],
-          element.data['description'],
           element.id,
         ),
       );
@@ -43,7 +42,6 @@ class PocketClient {
   static Future<User> getUser(String id) async {
     final userRecord = await _client.collection('users').getOne(id);
     final user = User.fromJson(userRecord.data, userRecord);
-    print("I: going to get topics");
     user.topics = await getUserTopics(user.id);
     return user;
   }
@@ -60,14 +58,12 @@ class PocketClient {
         topics.add(
           Topic(
             topic.data['name'],
-            topic.data['description'],
             topic.id,
           ),
         );
       }
       return topics;
     } catch (e) {
-      print('I: failed');
       return [];
     }
   }
@@ -95,6 +91,14 @@ class PocketClient {
         }
         if (topicFilter == null || topicNames.contains(topicFilter.name)) {
           courses.add(curCourse);
+        } else if (topicFilter.name == "For You") {
+          final forYouTopics = await getUserTopics(model.id);
+          for (var topic in forYouTopics) {
+            if (topicNames.contains(topic.name)) {
+              courses.add(curCourse);
+              continue;
+            }
+          }
         }
       }
       return courses;
@@ -380,7 +384,7 @@ class PocketClient {
   ) async {
     final courseData = newCourse.toJson();
 
-    final image = MultipartFile.fromBytes(
+    final image = http.MultipartFile.fromBytes(
       'image',
       courseImage,
       filename: 'courseImage.png',
@@ -432,13 +436,13 @@ class PocketClient {
   ) async {
     final episodeData = newEpisode.toJson();
 
-    final image = MultipartFile.fromBytes(
+    final image = http.MultipartFile.fromBytes(
       'thumbnail',
       episodeImage,
       filename: 'episodeImage.png',
     );
 
-    final video = MultipartFile.fromBytes(
+    final video = http.MultipartFile.fromBytes(
       'video',
       episodeVideo,
       filename: 'episodeVideo.mp4',
@@ -453,7 +457,8 @@ class PocketClient {
       notifyNewEpisode(episodeRecord);
 
       return true;
-    } catch (e) {
+    } on ClientException catch (e) {
+      print(e.response);
       return false;
     }
   }
@@ -505,14 +510,25 @@ class PocketClient {
     }
   }
 
-  static Future<List<Course>> getPersonalizedCourses(String userId) async {
+  static Future<List<Course>> getPersonalizedCourses(
+    String userId, [
+    bool reverse = false,
+  ]) async {
     try {
       final List<Course> courses = [];
+      final List<String> courseIds = [];
       final userTopics = await getUserTopics(userId);
       for (var topic in userTopics) {
-        courses.addAll(await getCourses(topic));
+        final curCourses = await getCourses(topic);
+        for (var course in curCourses) {
+          if (!courseIds.contains(course.id)) {
+            courseIds.add(course.id);
+            courses.add(course);
+          }
+        }
       }
-      return courses;
+      courses.sort((a, b) => a.compare(b));
+      return reverse ? courses.reversed.toList() : courses;
     } catch (e) {
       return [];
     }
@@ -590,6 +606,7 @@ class PocketClient {
   static Future<List<User>> getFollowerUsers(String userId) async {
     try {
       final userList = <User>[];
+      final checkedUsers = <String>[];
       final followList = await _client.collection('follows').getList(
             perPage: 100000000,
             filter: 'follower_id = "$userId"',
@@ -597,9 +614,11 @@ class PocketClient {
 
       for (var follow in followList.items) {
         final curUser = await getUser(follow.data['followed_id']);
-        if (curUser.model!.data['is_banned'] ?? false) {
+        if (curUser.model!.data['is_banned'] ??
+            false || checkedUsers.contains(curUser.id)) {
           continue;
         }
+        checkedUsers.add(curUser.id);
         userList.add(curUser);
       }
       return userList;

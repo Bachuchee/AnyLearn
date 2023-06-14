@@ -4,7 +4,9 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 
 class NewTopicDialog extends StatefulWidget {
-  const NewTopicDialog({super.key});
+  const NewTopicDialog(this.onCreate, {super.key});
+
+  final void Function(String newTopic) onCreate;
 
   @override
   State<NewTopicDialog> createState() => _NewTopicDialogState();
@@ -65,6 +67,7 @@ class _NewTopicDialogState extends State<NewTopicDialog> {
                         final res = await PocketClient.createTopic(
                             _textController.text);
                         if (!res) {
+                          widget.onCreate(_textController.text);
                           Navigator.pop(context);
                         }
                         setState(() {

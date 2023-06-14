@@ -49,6 +49,8 @@ dependencies:
   pod_player: ^0.1.0
   flutter_rating_bar: ^4.0.1
   about: ^2.1.1
+  url_launcher: ^6.1.11
+  flutter_launcher_icons: ^0.13.1
 
 dev_dependencies:
   flutter_test:

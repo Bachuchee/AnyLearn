@@ -18,7 +18,7 @@ class HomePage extends ConsumerStatefulWidget {
 class _HomePageState extends ConsumerState<HomePage> {
   final _client = PocketClient.client;
   List<Course> _courses = [];
-  Topic? _prevTopic = Topic("", "", "", true);
+  Topic? _prevTopic = Topic("", "");
 
   @override
   void initState() {

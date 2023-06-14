@@ -48,45 +48,77 @@ class _AdminViewState extends State<AdminView> {
           padding: const EdgeInsets.all(8.0),
           child: SizedBox(
             height: MediaQuery.of(context).size.height * 0.08,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              shrinkWrap: true,
-              itemCount: _topics.length + 1,
-              itemBuilder: (context, index) {
-                if (index < _topics.length) {
-                  return InputChip(
-                    padding: const EdgeInsets.all(8.0),
-                    label: Text(_topics[index].name),
-                    onSelected: (val) {
-                      setState(() {
-                        PocketClient.client
-                            .collection('topics')
-                            .delete(_topics[index].id);
-                        _topics.removeAt(index);
-                      });
+            child: Row(
+              children: [
+                SizedBox(
+                  height: 80.0,
+                  width: MediaQuery.of(context).size.width * 0.85,
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    shrinkWrap: true,
+                    itemCount: _topics.length,
+                    itemBuilder: (context, index) {
+                      return InputChip(
+                        padding: const EdgeInsets.all(8.0),
+                        label: Text(_topics[index].name),
+                        onSelected: (val) {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title:
+                                  Text("Delete Topic: ${_topics[index].name}?"),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      PocketClient.client
+                                          .collection('topics')
+                                          .delete(_topics[index].id);
+                                      _topics.removeAt(index);
+                                    });
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text(
+                                    "Yes",
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () => Navigator.of(context).pop(),
+                                  child: const Text("No"),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                        checkmarkColor: secondaryColor,
+                      );
                     },
-                    selected: _topics[index].isValid,
-                    checkmarkColor: secondaryColor,
-                  );
-                } else {
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) => const NewTopicDialog(),
-                        );
-                      },
-                      child: const Icon(Icons.add),
+                    separatorBuilder: (context, index) => const SizedBox(
+                      height: 8.0,
+                      width: 8.0,
                     ),
-                  );
-                }
-              },
-              separatorBuilder: (context, index) => const SizedBox(
-                height: 8.0,
-                width: 8.0,
-              ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => NewTopicDialog(
+                          (newTopic) => setState(
+                            () => _topics.add(
+                              Topic(newTopic, ""),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                    child: const Icon(Icons.add),
+                  ),
+                ),
+              ],
             ),
           ),
         ),

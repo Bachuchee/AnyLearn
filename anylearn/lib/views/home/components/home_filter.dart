@@ -12,8 +12,6 @@ final filterProvider = StateProvider<Topic?>(
   (ref) => Topic(
     "For You",
     "",
-    "",
-    true,
   ),
 );
 
@@ -30,7 +28,7 @@ class HomeFilters extends ConsumerStatefulWidget with PreferredSizeWidget {
 }
 
 class _HomeFiltersState extends ConsumerState<HomeFilters> {
-  final List<Topic> _topicList = [Topic("For You", "", "", true)];
+  final List<Topic> _topicList = [Topic("For You", "")];
 
   @override
   void initState() {

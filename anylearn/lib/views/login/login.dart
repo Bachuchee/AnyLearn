@@ -1,5 +1,8 @@
 import 'package:anylearn/views/login/components.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+final _url = Uri.parse('https://20miny5dn5n.typeform.com/to/PN8rhWVa');
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -53,22 +56,10 @@ class _LoginPageState extends State<LoginPage> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextButton(
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text("Contact Us!"),
-                    content: const Text(
-                      "You can cotact us by mail using this refrence email: support@anylearn.com (School Project no real email or contacting ;)",
-                    ),
-                    actions: [
-                      TextButton(
-                        child: const Text("Ok"),
-                        onPressed: () => Navigator.of(context).pop(),
-                      )
-                    ],
-                  ),
-                );
+              onPressed: () async {
+                if (!await launchUrl(_url)) {
+                  throw Exception('Could not launch $_url');
+                }
               },
               style: TextButton.styleFrom(
                 foregroundColor: Colors.white,

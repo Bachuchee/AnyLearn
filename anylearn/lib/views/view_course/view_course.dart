@@ -258,13 +258,36 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
               .toString(),
         ),
         onDelete: () {
-          _client.collection('episodes').delete(episode.episodeModel!.id);
-          setState(() {
-            if (_status != null) {
-              _status!.epId = "";
-            }
-            _episodeList.remove(episode);
-          });
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text("Delete Episode?"),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    _client
+                        .collection('episodes')
+                        .delete(episode.episodeModel!.id);
+                    setState(() {
+                      if (_status != null) {
+                        _status!.epId = "";
+                      }
+                      _episodeList.remove(episode);
+                    });
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text(
+                    "Yes",
+                    style: TextStyle(color: Colors.red),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text("No"),
+                ),
+              ],
+            ),
+          );
         },
         isCreator: isCreator,
       ));
@@ -426,6 +449,13 @@ class _ViewCourseState extends ConsumerState<ViewCourse> {
                             child: CourseRating(_courseRating),
                           ),
                         ),
+                      Align(
+                        alignment: Alignment.bottomRight,
+                        child: Text(
+                          course.model?.created.split(" ")[0] ?? "",
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      )
                     ],
                   ),
                 );

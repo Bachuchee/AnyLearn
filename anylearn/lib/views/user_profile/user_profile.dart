@@ -27,14 +27,17 @@ class UserProfile extends ConsumerStatefulWidget {
 
 class _UserProfileState extends ConsumerState<UserProfile> {
   final _client = PocketClient.client;
+  bool _isLoading = false;
   List<Course> _userCourses = [];
   int _followerCount = 0;
   int _followingCount = 0;
 
   Future<void> getUser() async {
+    setState(() => _isLoading = true);
     ref.read(curUserProvider.notifier).state = await PocketClient.getUser(
       widget.userId,
     );
+    setState(() => _isLoading = false);
   }
 
   Future<void> getCourses() async {
@@ -77,6 +80,12 @@ class _UserProfileState extends ConsumerState<UserProfile> {
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
     final user = ref.watch(curUserProvider);
 
     final destinationIndex = ref.watch(indexProvider);

@@ -37,6 +37,22 @@ class Course {
     topics.remove(topic);
   }
 
+  DateTime get created {
+    final dateList = model?.created.split(" ")[0].split("-") ?? [];
+    if (dateList.isEmpty) {
+      return DateTime(0);
+    }
+    return DateTime(
+      int.parse(dateList[0]),
+      int.parse(dateList[1]),
+      int.parse(dateList[2]),
+    );
+  }
+
+  int compare(Course other) {
+    return created.compareTo(other.created);
+  }
+
   Map<String, dynamic> toJson() => {
         'title': title,
         'description': description,

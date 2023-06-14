@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:anylearn/models/episode.dart';
 import 'package:anylearn/models/user.dart';
 import 'package:anylearn/views/home/components/CourseCard.dart';
@@ -81,6 +83,14 @@ class _CreateEpisodeState extends ConsumerState<CreateEpisode> {
         "ViewCourse",
         params: {'courseId': newEpisode.course!.model!.id},
       );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Something went wrong. please check that all of the fields are valid and unique and that the video file is of an accepted extension (.mp4, .3gp, .mov) and size (under 40 mb)",
+          ),
+        ),
+      );
     }
   }
 
@@ -118,16 +128,6 @@ class _CreateEpisodeState extends ConsumerState<CreateEpisode> {
           width: 200.0,
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.search,
-                color: secondaryColor,
-              ),
-            ),
-          ),
           ProfileAvatar(
             userImage: userAvatar,
           ),
